@@ -1,6 +1,10 @@
 
-### standard library import
+### standard library imports
+
 from copy import deepcopy
+
+from itertools import chain
+
 
 ### third-party imports
 
@@ -29,6 +33,9 @@ class AnimationPlayer2D:
         self.values = anim_data['values']
         self.root_pos_exchange_map = anim_data['root_pos_exchange_map']
         self.timing = deepcopy(anim_data['timing'])
+
+        self.walking_data = []
+        self.drawing_methods = []
 
         self.object_map = {
             obj_name : AnimationObject2D(obj_data)
@@ -65,10 +72,10 @@ class AnimationPlayer2D:
         self.set_structure()
 
         ###
-        self.draw = self.delayed_draw
+        self.store_values_and_timing()
 
         ###
-        #self.store_animation_clock()
+        self.draw = self.delayed_draw
 
     def clear_rotations(self):
 
@@ -101,6 +108,64 @@ class AnimationPlayer2D:
         for key in ('updating_order','drawing_order','object_names'):
             setattr(self, key, structure[key])
 
+    def store_values_and_timing(self):
+
+        walking_data = self.walking_data
+        walking_data.clear()
+
+        anim_name = self.anim_name
+
+        anim_values = self.values[anim_name]
+        anim_timing = self.timing[anim_name]
+
+        obmap = self.object_map
+
+        for obj_name in self.updating_order:
+
+            walking_data.append(
+
+                (
+
+                  obmap[obj_name],
+
+                  anim_values[obj_name]['surfaces'],
+                  anim_timing[obj_name]['surface_indices'],
+
+                  anim_values[obj_name]['positions'],
+                  anim_timing[obj_name]['position_indices'],
+
+                )
+
+            )
+
+        ###
+
+        self.main_timing = max(
+
+            chain.from_iterable(
+
+                (
+                    (surface_indices, position_indices)
+                    for _, _, surface_indices, _, position_indices,
+                    in walking_data
+                ),
+
+            ),
+
+            key = lambda indices: len(indices)
+
+        )
+
+        ###
+
+        drawing_methods = self.drawing_methods
+        drawing_methods.clear()
+
+        drawing_methods.extend(
+            obmap[obj_name].draw
+            for obj_name in self.drawing_order
+        )
+
     def exchange_root_pos(self, previous_root, new_root):
 
         exchange_map = self.root_pos_exchange_map
@@ -125,22 +190,20 @@ class AnimationPlayer2D:
 
     def no_walk_pos_update(self):
 
-        anim_name = self.anim_name
+        for (
 
-        anim_values = self.values[anim_name]
-        anim_timing = self.timing[anim_name]
+            obj,
 
-        obmap = self.object_map
+            _,
+            _,
 
-        for obj_name in self.updating_order:
+            positions,
+            position_indices,
 
-            values = anim_values[obj_name]
-            timing = anim_timing[obj_name]
+        ) in self.walking_data:
 
-            pos_index = timing['position_indices'][0]
-
-            obj = obmap[obj_name]
-            obj.set_pos(values['positions'][pos_index])
+            pos_index = position_indices[0]
+            obj.set_pos(positions[pos_index])
 
     def ensure_animation(self, anim_name):
         if self.anim_name != anim_name:
@@ -148,65 +211,49 @@ class AnimationPlayer2D:
 
     def normal_draw(self):
 
-        ###
-        obmap = self.object_map
+        for (
 
-        ### 
+            obj,
 
-        anim_name = self.anim_name
+            surfaces,
+            surface_indices,
 
-        anim_values = self.values[anim_name]
-        anim_timing = self.timing[anim_name]
+            positions,
+            position_indices,
 
-        for obj_name in self.updating_order:
+        ) in self.walking_data:
 
-            values = anim_values[obj_name]
-            timing = anim_timing[obj_name]
+            surface_indices.walk(1)
+            obj.image = surfaces[surface_indices[0]]
 
-            timing['surface_indices'].walk(1)
-            surf_index = timing['surface_indices'][0]
-
-            timing['position_indices'].walk(1)
-            pos_index = timing['position_indices'][0]
-
-            obj = obmap[obj_name]
-            obj.image = values['surfaces'][surf_index]
-            obj.set_pos(values['positions'][pos_index])
+            position_indices.walk(1)
+            obj.set_pos(positions[position_indices[0]])
 
         ###
-
-        for obj_name in self.drawing_order:
-            obmap[obj_name].draw()
+        for method in self.drawing_methods:
+            method()
 
     def delayed_draw(self):
 
-        ###
-        obmap = self.object_map
+        for (
 
-        ### 
+            obj,
 
-        anim_name = self.anim_name
+            surfaces,
+            surface_indices,
 
-        anim_values = self.values[anim_name]
-        anim_timing = self.timing[anim_name]
+            positions,
+            position_indices,
 
-        for obj_name in self.updating_order:
+        ) in self.walking_data:
 
-            values = anim_values[obj_name]
-            timing = anim_timing[obj_name]
-
-            surf_index = timing['surface_indices'][0]
-
-            pos_index = timing['position_indices'][0]
-
-            obj = obmap[obj_name]
-            obj.image = values['surfaces'][surf_index]
-            obj.set_pos(values['positions'][pos_index])
+            obj.image = surfaces[surface_indices[0]]
+            obj.set_pos(positions[position_indices[0]])
 
         ###
 
-        for obj_name in self.drawing_order:
-            obmap[obj_name].draw()
+        for method in self.drawing_methods:
+            method()
 
         ###
         self.draw = self.normal_draw

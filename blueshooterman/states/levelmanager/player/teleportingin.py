@@ -42,11 +42,11 @@ class TeleportingIn:
 
         if ap.anim_name == 'materializing':
 
-            surf_indices = ap.timing['materializing']['body']['surface_indices']
+            main_timing = ap.main_timing
 
-            if surf_indices.get_original_index(0) == 0:
+            if main_timing.get_original_index(0) == 0:
                 SOUND_MAP['blue_shooter_man_materialization.wav'].play()
 
-            if surf_indices.peek_loops_no(1) == 1:
+            if main_timing.peek_loops_no(1) == 1:
                 self.set_state('idle_right')
                 REFS.enable_player_tracking()

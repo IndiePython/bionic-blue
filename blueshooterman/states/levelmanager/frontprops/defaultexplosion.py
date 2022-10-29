@@ -26,7 +26,7 @@ class DefaultExplosion:
 
     def update(self):
 
-        if self.aniplayer.timing['default_explosion']['body']['surface_indices'].peek_loops_no(1) == 1:
+        if self.aniplayer.main_timing.peek_loops_no(1) == 1:
 
             append_task(
                 partial(FRONT_PROPS.remove, self)
