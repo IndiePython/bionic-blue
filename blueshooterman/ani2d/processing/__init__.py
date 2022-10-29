@@ -12,21 +12,19 @@ from pygame import Surface
 
 from pygame.math import Vector2
 
-from pygame.transform import flip as flip_surface
-
 
 ### local imports
 
-from ..ourstdlibs.pyl import load_pyl
+from ...ourstdlibs.pyl import load_pyl
 
-from ..ourstdlibs.wdeque.main import WalkingDeque
+from ...ourstdlibs.wdeque.main import WalkingDeque
 
-from ..ourstdlibs.tree import get_tree_values
+from ...ourstdlibs.tree import get_tree_values
 
+from .constants import EMPTY_SURF, TRANSP_COLORKEY
 
+from .derived import process_derived_animations
 
-TRANSP_COLORKEY = (192, 192, 192)
-EMPTY_SURF = Surface((0, 0)).convert()
 
 
 def process_animation_data(animation_dir):
@@ -194,42 +192,8 @@ def process_animation_data(animation_dir):
                 else:
                     obj_timing[key] = WalkingDeque((0,))
 
-
-    ### derived animations
-
-    for anim_name, data in metadata.get('derived_animations', {}).items():
-
-        anim_values = values[anim_name] = {}
-        anim_timing = timing[anim_name] = {}
-
-        target_anim_name = data['target']
-
-        target_anim_values = values[target_anim_name]
-        target_anim_timing = timing[target_anim_name]
-
-        operation_name = data['operation_name']
-
-        if operation_name == 'flip_x':
-
-            for obj_name, target_obj_values in target_anim_values.items():
-
-                obj_values = anim_values[obj_name] = {}
-
-                obj_values['surfaces'] = tuple(
-                    flip_surface(surf, True, False)
-                    for surf in target_obj_values['surfaces']
-                )
-
-                obj_values['positions'] = target_obj_values['positions']
-
-            ##
-
-            for obj_name, target_obj_timing in target_anim_timing.items():
-
-                obj_timing = anim_timing[obj_name] = {}
-
-                for key in ('surface_indices', 'position_indices'):
-                    obj_timing[key] = WalkingDeque(target_obj_timing[key])
+    ###
+    process_derived_animations(metadata, values, timing)
 
     ###
 

@@ -39,7 +39,7 @@ from ..pygameconstants import MSECS_PER_FRAME, WHITE_BG, blit_on_screen
 
 from ..textman import render_text
 
-from ..ani2d.proc import process_animation_data
+from ..ani2d.processing import process_animation_data
 
 
 ### gather animation resources
