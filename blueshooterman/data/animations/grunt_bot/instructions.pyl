@@ -16,6 +16,15 @@
     "animations" :{
         "idle_right": {"structure": "standing"},
         "idle_left": {"structure": "standing"},
+        "whitened_idle_left": {"structure": "standing"},
+    },
+    "blending": {
+        "idle_left": {
+            "+white": "whitened_idle_left"
+        },
+        "whitened_idle_left": {
+            "-white": "idle_left",
+        },
     },
     "values": {
         "idle_right": {
@@ -32,9 +41,15 @@
         },
     },
     "derived_animations": {
+
         "idle_left": {
             "operation_name": "flip_x",
             "target": "idle_right",
+        },
+        "whitened_idle_left": {
+            "operation_name": "whiten",
+            "target": "idle_left",
+            "priority": 1,
         },
     },
 }
