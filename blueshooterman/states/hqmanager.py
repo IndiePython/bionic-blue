@@ -1,0 +1,3 @@
+
+class HeadQuartersManager:
+    pass

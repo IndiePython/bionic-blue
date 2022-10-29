@@ -1,0 +1,29 @@
+{
+    "name": "explosions",
+    "geometry": {
+        "body" : {"size" : (16, 16)},
+    },
+    "objects" : {
+        "body" : {"geometry": "body"},
+    },
+    "existing_structures" : {
+        "standing" : {"tree" : {"name": "body"}},
+    },
+    "animations" :{
+        "default_explosion": {"structure": "standing"},
+    },
+    "values": {
+        "default_explosion": {
+            "body": {
+                "surfaces": "explosions.default_explosion",
+            },
+        },
+    },
+    "timing": {
+        "default_explosion": {
+            "body": {
+                "surface_indices": "explosions.default_explosion",
+            },
+        },
+    },
+}
