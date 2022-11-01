@@ -104,13 +104,13 @@ class LevelManager:
                         'name': 'asphalt_block',
                         'size': (320, 16),
                         'pos_name': 'bottomleft',
-                        'pos_value': (480, 100),
+                        'pos_value': (480, 96),
                     },
                     {
                         'name': 'asphalt_block',
                         'size': (16, 30),
                         'pos_name': 'bottomleft',
-                        'pos_value': (520, 84),
+                        'pos_value': (520, 80),
                     },
 
                 ],
@@ -129,12 +129,12 @@ class LevelManager:
                     {
                         'name': 'grunt_bot',
                         'pos_name': 'midbottom',
-                        'pos_value': (490, 84),
+                        'pos_value': (490, 80),
                     },
                     {
                         'name': 'grunt_bot',
                         'pos_name': 'midbottom',
-                        'pos_value': (660, 84),
+                        'pos_value': (660, 80),
                     },
                 ],
 

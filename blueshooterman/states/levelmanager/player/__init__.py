@@ -1,8 +1,16 @@
 
+### third-party import
+from pygame.time import get_ticks as get_msecs
+
+
 ### local imports
 
 from ....config import (
-    SOUND_MAP, GRAVITY_ACCEL, MAX_Y_SPEED, BLOCKS_ON_SCREEN
+    SOUND_MAP,
+    GRAVITY_ACCEL,
+    MAX_Y_SPEED,
+    BLOCKS_ON_SCREEN,
+    DAMAGE_REBOUND_MSECS,
 )
 
 from ....pygameconstants import SCREEN_RECT
@@ -23,6 +31,8 @@ from .walkleft import WalkLeft
 from .decelerateright import DecelerateRight
 from .decelerateleft import DecelerateLeft
 
+from .hurt import Hurt
+
 
 class Player(
     TeleportingIn,
@@ -32,9 +42,12 @@ class Player(
     WalkLeft,
     DecelerateRight,
     DecelerateLeft,
+    Hurt,
 ):
 
     def __init__(self):
+
+        self.health = 32
 
         self.midair = False
 
@@ -48,6 +61,9 @@ class Player(
         ###
 
         self.last_shot = 0
+        self.last_damage = 0
+
+        ###
 
         self.x_speed = 0
         self.y_speed = MAX_Y_SPEED
@@ -91,6 +107,9 @@ class Player(
             self.avoid_blocks_horizontally()
 
         self.react_to_gravity()
+
+        if get_msecs() - self.last_damage > DAMAGE_REBOUND_MSECS:
+            self.aniplayer.restore_constant_drawing()
 
     def draw(self):
         self.aniplayer.draw()
@@ -154,7 +173,7 @@ class Player(
 
         if self.midair:
 
-            if anim_name == 'teleporting': return
+            if anim_name in {'teleporting', 'hurt_right', 'hurt_left'}: return
 
             blend_shooting = 'shooting' in anim_name
 
@@ -184,3 +203,33 @@ class Player(
         if not self.midair:
             self.y_speed += self.jump_dy
             SOUND_MAP['blue_shooter_man_jump.wav'].play()
+
+    def damage(self, amount):
+
+        now = get_msecs()
+
+        if now - self.last_damage <= DAMAGE_REBOUND_MSECS:
+            return
+
+        ap = self.aniplayer
+
+        self.health += -amount
+        SOUND_MAP['blue_shooter_man_hurt.wav'].play()
+
+        if self.health <= 0:
+            print('died')
+
+        new_anim = 'hurt_right' if ap.anim_name.endswith('right') else 'hurt_left'
+        ap.switch_animation(new_anim)
+
+        self.y_speed = -5
+
+        if new_anim == 'hurt_right':
+            self.x_speed = -1
+
+        else:
+            self.x_speed = 1
+
+        self.set_state('hurt')
+        self.last_damage = now
+        ap.start_intermittent_drawing()

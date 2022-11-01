@@ -3,7 +3,7 @@
 
 from copy import deepcopy
 
-from itertools import chain
+from itertools import chain, cycle
 
 
 ### third-party imports
@@ -50,6 +50,9 @@ class AnimationPlayer2D:
         self.root = root = self.object_map[self.structure[anim_name]['tree']['name']]
         obj.rect = root.rect
         setattr(obj.rect, pos_name, pos_value)
+
+        ###
+        self.normal_draw = self.draw_constantly
 
         ###
         self.switch_animation(anim_name)
@@ -209,7 +212,7 @@ class AnimationPlayer2D:
         if self.anim_name != anim_name:
             self.switch_animation(anim_name)
 
-    def normal_draw(self):
+    def draw_constantly(self):
 
         for (
 
@@ -257,6 +260,47 @@ class AnimationPlayer2D:
 
         ###
         self.draw = self.normal_draw
+
+    def start_intermittent_drawing(self, cycle_values=(0, 1)):
+
+        self.must_draw = cycle(cycle_values).__next__
+
+        self.normal_draw = self.intermittent_draw
+
+        if self.draw != self.delayed_draw:
+            self.draw = self.intermittent_draw
+
+    def restore_constant_drawing(self):
+
+        self.normal_draw = self.draw_constantly
+
+        if self.draw != self.delayed_draw:
+            self.draw = self.draw_constantly
+
+    def intermittent_draw(self):
+
+        if self.must_draw():
+            self.draw_constantly()
+
+        else:
+
+            for (
+
+                obj,
+
+                surfaces,
+                surface_indices,
+
+                positions,
+                position_indices,
+
+            ) in self.walking_data:
+
+                surface_indices.walk(1)
+                obj.image = surfaces[surface_indices[0]]
+
+                position_indices.walk(1)
+                obj.set_pos(positions[position_indices[0]])
 
 
 class AnimationObject2D:

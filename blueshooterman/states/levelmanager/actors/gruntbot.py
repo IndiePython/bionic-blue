@@ -8,7 +8,7 @@ from pygame.time import get_ticks as get_msecs
 
 ### local imports
 
-from ....config import ACTORS, FRONT_PROPS, append_task
+from ....config import REFS, ACTORS, FRONT_PROPS, append_task
 
 from ....ani2d.player import AnimationPlayer2D
 
@@ -23,6 +23,8 @@ class GruntBot:
 
         self.health = 5
 
+        self.player = REFS.states.level_manager.player
+
         self.name = name
 
         self.aniplayer = (
@@ -32,14 +34,21 @@ class GruntBot:
         )
 
         self.last_damage = get_msecs()
-        self.update = do_nothing
+        self.routine_check = do_nothing
+
+    def update(self):
+
+        if self.player.rect.colliderect(self.rect):
+            self.player.damage(3)
+
+        self.routine_check()
 
     def check_damage_whitening(self):
 
         if get_msecs() - self.last_damage > 70:
 
             self.aniplayer.blend('-white')
-            self.update = do_nothing
+            self.routine_check = do_nothing
 
     def draw(self):
         self.aniplayer.draw()
@@ -57,4 +66,4 @@ class GruntBot:
 
         else:
             self.aniplayer.blend('+white')
-            self.update = self.check_damage_whitening
+            self.routine_check = self.check_damage_whitening

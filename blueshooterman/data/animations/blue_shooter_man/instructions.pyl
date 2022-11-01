@@ -36,6 +36,9 @@
         "shooting_jump_right": {"structure": "standing"},
         "shooting_jump_left": {"structure": "standing"},
 
+        "hurt_right": {"structure": "standing"},
+        "hurt_left": {"structure": "standing"},
+
     },
     "blending": {
         "teleporting": {
@@ -147,6 +150,11 @@
                 "surfaces": "shooter_man.shooting_jump_right",
             },
         },
+        "hurt_right": {
+            "body": {
+                "surfaces": "shooter_man.hurt_right",
+            },
+        },
     },
     "timing": {
         "teleporting": {
@@ -199,6 +207,11 @@
                 "surface_indices": "shooter_man.shooting_jump_right",
             },
         },
+        "hurt_right": {
+            "body": {
+                "surface_indices": "shooter_man.hurt_right",
+            },
+        },
     },
     "derived_animations": {
         "idle_left": {
@@ -232,6 +245,10 @@
         "shooting_jump_left": {
             "operation_name": "flip_x",
             "target": "shooting_jump_right",
+        },
+        "hurt_left": {
+            "operation_name": "flip_x",
+            "target": "hurt_right",
         },
     },
 }
