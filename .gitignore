@@ -1,5 +1,7 @@
 # __pycache__ folders
 __pycache__
 
-# .pxa backup files
+# backup files
+
 *.pxa.*
+*.ndz.*
