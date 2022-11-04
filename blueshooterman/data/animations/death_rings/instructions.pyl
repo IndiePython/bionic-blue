@@ -1,0 +1,96 @@
+{
+    "name": "death_rings",
+    "geometry": {
+        "center" : {
+            "size" : (1, 1),
+        },
+        "death_ring": {
+            "size": (16, 16),
+        },
+    },
+    "objects" : {
+        "center" : {"geometry": "center"},
+        "death_ring00": {"geometry": "death_ring"},
+        "death_ring01": {"geometry": "death_ring"},
+        "death_ring02": {"geometry": "death_ring"},
+        "death_ring03": {"geometry": "death_ring"},
+        "death_ring04": {"geometry": "death_ring"},
+        "death_ring05": {"geometry": "death_ring"},
+    },
+    "existing_structures" : {
+        "expanding" : {
+            "tree" : {
+                "name": "center",
+                "children": [
+                    {"name": "death_ring00"},
+                    {"name": "death_ring01"},
+                    {"name": "death_ring02"},
+                    {"name": "death_ring03"},
+                    {"name": "death_ring04"},
+                    {"name": "death_ring05"},
+                ],
+            }
+        },
+    },
+    "animations" :{
+        "expanding": {"structure": "expanding"},
+    },
+    "values": {
+        "expanding": {
+            "center": {},
+            "death_ring00": {
+                "surfaces": "death_rings.expanding",
+                "positions": "death_ring00_expanding",
+            },
+            "death_ring01": {
+                "surfaces": "death_rings.expanding",
+                "positions": "death_ring01_expanding",
+            },
+            "death_ring02": {
+                "surfaces": "death_rings.expanding",
+                "positions": "death_ring02_expanding",
+            },
+            "death_ring03": {
+                "surfaces": "death_rings.expanding",
+                "positions": "death_ring03_expanding",
+            },
+            "death_ring04": {
+                "surfaces": "death_rings.expanding",
+                "positions": "death_ring04_expanding",
+            },
+            "death_ring05": {
+                "surfaces": "death_rings.expanding",
+                "positions": "death_ring05_expanding",
+            },
+        },
+    },
+    "timing": {
+        "expanding": {
+            "center": {},
+            "death_ring00": {
+                "surface_indices": "death_rings.expanding",
+                "position_indices": "death_ring00_expanding",
+            },
+            "death_ring01": {
+                "surface_indices": "death_rings.expanding",
+                "position_indices": "death_ring01_expanding",
+            },
+            "death_ring02": {
+                "surface_indices": "death_rings.expanding",
+                "position_indices": "death_ring02_expanding",
+            },
+            "death_ring03": {
+                "surface_indices": "death_rings.expanding",
+                "position_indices": "death_ring03_expanding",
+            },
+            "death_ring04": {
+                "surface_indices": "death_rings.expanding",
+                "position_indices": "death_ring04_expanding",
+            },
+            "death_ring05": {
+                "surface_indices": "death_rings.expanding",
+                "position_indices": "death_ring05_expanding",
+            },
+        },
+    },
+}

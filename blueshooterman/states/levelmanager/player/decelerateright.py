@@ -14,16 +14,16 @@ from pygame.locals import (
 
 )
 
-from pygame.color import THECOLORS
-
 from pygame.event import get as get_events
 
 from pygame.key import get_pressed as get_pressed_state
 
+from pygame.time import get_ticks as get_msecs
+
 
 ### local imports
 
-from ....config import PROJECTILES
+from ....config import PROJECTILES, DAMAGE_REBOUND_MSECS
 
 from .projectiles.default import DefaultProjectile
 
@@ -75,6 +75,8 @@ class DecelerateRight:
 
     def decelerate_right_update(self):
 
+        x = self.rect.x
+
         self.x_speed += self.x_accel
         self.rect.x += self.x_speed
 
@@ -82,6 +84,14 @@ class DecelerateRight:
             self.x_speed += -1
         elif self.x_speed < 0:
             self.x_speed += 1
+
+        if self.rect.x != x:
+            self.avoid_blocks_horizontally()
+
+        self.react_to_gravity()
+
+        if get_msecs() - self.last_damage > DAMAGE_REBOUND_MSECS:
+            self.aniplayer.restore_constant_drawing()
 
     def decelerate_right_shoot(self):
 

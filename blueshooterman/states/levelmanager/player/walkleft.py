@@ -14,8 +14,6 @@ from pygame.locals import (
 
 )
 
-from pygame.color import THECOLORS
-
 from pygame.event import get as get_events
 
 from pygame.key import get_pressed as get_pressed_state
@@ -25,7 +23,12 @@ from pygame.time import get_ticks as get_msecs
 
 ### local imports
 
-from ....config import PROJECTILES, MAX_X_SPEED, SHOOTING_STANCE_MSECS
+from ....config import (
+    PROJECTILES,
+    MAX_X_SPEED,
+    SHOOTING_STANCE_MSECS,
+    DAMAGE_REBOUND_MSECS,
+)
 
 from .projectiles.default import DefaultProjectile
 
@@ -77,6 +80,8 @@ class WalkLeft:
 
     def walk_left_update(self):
 
+        x = self.rect.x
+
         if self.x_speed < 0:
             self.x_speed += -1
 
@@ -89,6 +94,14 @@ class WalkLeft:
 
         if get_msecs() - self.last_shot >= SHOOTING_STANCE_MSECS:
             self.aniplayer.blend('-shooting')
+
+        if self.rect.x != x:
+            self.avoid_blocks_horizontally()
+
+        self.react_to_gravity()
+
+        if get_msecs() - self.last_damage > DAMAGE_REBOUND_MSECS:
+            self.aniplayer.restore_constant_drawing()
 
     def walk_left_shoot(self):
 

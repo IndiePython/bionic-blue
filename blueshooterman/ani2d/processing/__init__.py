@@ -112,7 +112,7 @@ def process_animation_data(animation_dir):
                     for point in points:
                         surf.set_at(tuple(map(int, point)), color)
 
-            anim_values['positions'] = [(0, 0)]
+            anim_values['positions'] = ((0, 0),)
 
             ###
 
@@ -134,7 +134,26 @@ def process_animation_data(animation_dir):
 
 
             anim_timing['surface_indices'] = tuple(surf_indices)
+            ###
             anim_timing['position_indices'] = (0,)
+
+    ### pos value grabbing
+
+    pos_paths = [
+        path
+        for path in animation_dir.iterdir()
+        if path.suffix.lower() == '.pos'
+    ]
+
+    all_pos_values = {}
+    all_pos_timing = {}
+
+    for path in pos_paths:
+
+        pos_data = load_pyl(str(path))
+
+        all_pos_values[path.stem] = pos_data
+        all_pos_timing[path.stem] = tuple(range(len(pos_data)))
 
 
     ### storing grabbed values and timing
@@ -161,8 +180,14 @@ def process_animation_data(animation_dir):
             for key, default in key_default_pairs:
 
                 if key in raw_obj_values:
-                    stem, pxa_anim_name = raw_obj_values[key].split('.')
-                    obj_values[key] = all_pxa_values[stem][pxa_anim_name][key]
+
+                    if key == 'surfaces':
+                        stem, pxa_anim_name = raw_obj_values[key].split('.')
+                        obj_values[key] = all_pxa_values[stem][pxa_anim_name][key]
+
+                    else:
+                        stem = raw_obj_values[key]
+                        obj_values[key] = all_pos_values[stem]
 
                 else:
                     obj_values[key] = default
@@ -186,8 +211,14 @@ def process_animation_data(animation_dir):
             for key in keys:
 
                 if key in raw_obj_timing:
-                    stem, pxa_anim_name = raw_obj_timing[key].split('.')
-                    obj_timing[key] = WalkingDeque(all_pxa_timing[stem][pxa_anim_name][key])
+
+                    if key == 'surface_indices':
+                        stem, pxa_anim_name = raw_obj_timing[key].split('.')
+                        obj_timing[key] = WalkingDeque(all_pxa_timing[stem][pxa_anim_name][key])
+
+                    else:
+                        stem = raw_obj_timing[key]
+                        obj_timing[key] = WalkingDeque(all_pos_timing[stem])
 
                 else:
                     obj_timing[key] = WalkingDeque((0,))

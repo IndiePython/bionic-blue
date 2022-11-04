@@ -11,6 +11,7 @@ from ....config import (
     MAX_Y_SPEED,
     BLOCKS_ON_SCREEN,
     DAMAGE_REBOUND_MSECS,
+    REFS,
 )
 
 from ....pygameconstants import SCREEN_RECT
@@ -32,6 +33,7 @@ from .decelerateright import DecelerateRight
 from .decelerateleft import DecelerateLeft
 
 from .hurt import Hurt
+from .dead import Dead
 
 
 class Player(
@@ -43,6 +45,7 @@ class Player(
     DecelerateRight,
     DecelerateLeft,
     Hurt,
+    Dead,
 ):
 
     def __init__(self):
@@ -51,12 +54,15 @@ class Player(
 
         self.midair = False
 
-        self.aniplayer = (
+        self.death_rings_aniplayer = (
+            AnimationPlayer2D(self, 'death_rings', 'expanding')
+        )
+
+        self.aniplayer = self.blue_shooter_man_aniplayer = (
             AnimationPlayer2D(
                 self, 'blue_shooter_man', 'teleporting', 'center', (SCREEN_RECT.centerx, -122)
             )
         )
-
 
         ###
 
@@ -79,6 +85,10 @@ class Player(
 
         self.rect.center = SCREEN_RECT.center
         self.y_speed = MAX_Y_SPEED
+
+        self.aniplayer = self.blue_shooter_man_aniplayer
+        self.rect = self.aniplayer.root.rect
+
         self.aniplayer.switch_animation('teleporting')
         self.set_state('teleporting_in')
 
@@ -86,30 +96,13 @@ class Player(
 
         self.state_name = state_name
 
-        for general_name, specific_name in (
-            ('control', 'control'),
-            ('update', 'state_update'),
-        ):
+        for operation_name in ('control', 'update'):
 
-            method = getattr(self, f'{state_name}_{general_name}')
-            setattr(self, specific_name, method)
+            method = getattr(self, f'{state_name}_{operation_name}')
+            setattr(self, operation_name, method)
 
         if state_name in self.aniplayer.anim_names:
             self.aniplayer.switch_animation(state_name)
-
-    def update(self):
-
-        x = self.rect.x
-
-        self.state_update()
-
-        if self.rect.x != x:
-            self.avoid_blocks_horizontally()
-
-        self.react_to_gravity()
-
-        if get_msecs() - self.last_damage > DAMAGE_REBOUND_MSECS:
-            self.aniplayer.restore_constant_drawing()
 
     def draw(self):
         self.aniplayer.draw()
@@ -205,6 +198,7 @@ class Player(
             SOUND_MAP['blue_shooter_man_jump.wav'].play()
 
     def damage(self, amount):
+        if self.state_name == 'dead': return
 
         now = get_msecs()
 
@@ -214,10 +208,13 @@ class Player(
         ap = self.aniplayer
 
         self.health += -amount
-        SOUND_MAP['blue_shooter_man_hurt.wav'].play()
 
         if self.health <= 0:
-            print('died')
+
+            self.die()
+            return
+
+        else: SOUND_MAP['blue_shooter_man_hurt.wav'].play()
 
         new_anim = 'hurt_right' if ap.anim_name.endswith('right') else 'hurt_left'
         ap.switch_animation(new_anim)
@@ -233,3 +230,15 @@ class Player(
         self.set_state('hurt')
         self.last_damage = now
         ap.start_intermittent_drawing()
+
+    def die(self):
+
+        self.set_state('dead')
+        self.aniplayer = self.death_rings_aniplayer
+
+        center = self.rect.center
+        self.rect = self.aniplayer.root.rect
+        self.rect.center = center
+
+        REFS.disable_player_tracking()
+        SOUND_MAP['blue_shooter_man_death.wav'].play()

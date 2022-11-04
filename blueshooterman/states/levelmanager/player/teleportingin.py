@@ -50,3 +50,5 @@ class TeleportingIn:
             if main_timing.peek_loops_no(1) == 1:
                 self.set_state('idle_right')
                 REFS.enable_player_tracking()
+
+        self.react_to_gravity()

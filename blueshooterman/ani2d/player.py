@@ -22,7 +22,14 @@ from ..pygameconstants import blit_on_screen
 
 class AnimationPlayer2D:
 
-    def __init__(self, obj, anim_data_key, anim_name, pos_name, pos_value):
+    def __init__(
+        self,
+        obj,
+        anim_data_key,
+        anim_name,
+        pos_name='topleft',
+        pos_value=(0, 0),
+    ):
 
         self.obj = obj
 
@@ -76,6 +83,10 @@ class AnimationPlayer2D:
 
         ###
         self.store_values_and_timing()
+
+        ###
+        for obj, *_ in self.walking_data:
+            obj.set_positioning()
 
         ###
         self.draw = self.delayed_draw
@@ -316,13 +327,24 @@ class AnimationObject2D:
     def draw(self):
         blit_on_screen(self.image, self.art_rect)
 
-    def set_pos(self, pos):
+    def set_positioning(self):
 
-        ### position art
+        if self.parent:
+            self.set_pos = self.position_self_and_art
+
+        else:
+            self.set_pos = self.position_art
+
+    def position_art(self, pos):
 
         pos_from, pos_to = self.art_anchorage
         art_pos = getattr(self.rect, pos_from) + self.anchorage_offset
         setattr(self.art_rect, pos_to, art_pos)
 
-        ### position relative to parent, if applicable
-        ### if self.parent ...
+    def position_self_and_art(self, pos):
+
+        self.rect.center = self.parent.rect.move(pos).center
+
+        pos_from, pos_to = self.art_anchorage
+        art_pos = getattr(self.rect, pos_from) + self.anchorage_offset
+        setattr(self.art_rect, pos_to, art_pos)
