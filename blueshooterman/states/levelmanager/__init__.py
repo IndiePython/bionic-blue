@@ -71,6 +71,8 @@ class LevelManager:
         if not hasattr(self, 'player'):
             self.player = Player()
 
+        self.player.prepare()
+
         self.state = self
 
         ### instantiate objects
@@ -279,6 +281,8 @@ class LevelManager:
 #            1,
 #        )
         ############################
+
+        self.player.health_column.draw()
 
         update()
 

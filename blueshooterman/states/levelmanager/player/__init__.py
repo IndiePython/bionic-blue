@@ -1,5 +1,8 @@
 
-### third-party import
+### third-party imports
+
+from pygame import Rect
+
 from pygame.time import get_ticks as get_msecs
 
 
@@ -14,9 +17,13 @@ from ....config import (
     REFS,
 )
 
-from ....pygameconstants import SCREEN_RECT
+from ....pygameconstants import SCREEN_RECT, blit_on_screen, SCREEN
+
+## classes for composition
 
 from ....ani2d.player import AnimationPlayer2D
+
+from .healthcolumn import HealthColumn
 
 
 ## states
@@ -50,15 +57,13 @@ class Player(
 
     def __init__(self):
 
-        self.health = 32
-
         self.midair = False
 
         self.death_rings_aniplayer = (
             AnimationPlayer2D(self, 'death_rings', 'expanding')
         )
 
-        self.aniplayer = self.blue_shooter_man_aniplayer = (
+        self.blue_shooter_man_aniplayer = (
             AnimationPlayer2D(
                 self, 'blue_shooter_man', 'teleporting', 'center', (SCREEN_RECT.centerx, -122)
             )
@@ -78,12 +83,12 @@ class Player(
 
         self.jump_dy = -15
 
-        ###
-        self.set_state('teleporting_in')
-
     def prepare(self):
 
-        self.rect.center = SCREEN_RECT.center
+        if not hasattr(self, 'health_column'):
+            self.health_column = HealthColumn()
+
+        self.rect.center = (SCREEN_RECT.centerx, -122)
         self.y_speed = MAX_Y_SPEED
 
         self.aniplayer = self.blue_shooter_man_aniplayer
@@ -207,9 +212,9 @@ class Player(
 
         ap = self.aniplayer
 
-        self.health += -amount
+        self.health_column.damage(amount)
 
-        if self.health <= 0:
+        if self.health_column.is_depleted():
 
             self.die()
             return

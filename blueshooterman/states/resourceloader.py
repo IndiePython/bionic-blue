@@ -5,7 +5,7 @@ from itertools import repeat, chain
 
 ### third-party imports
 
-from pygame import quit as quit_pygame
+from pygame import quit as quit_pygame, Surface
 
 from pygame.locals import QUIT
 
@@ -52,11 +52,11 @@ class ResourceLoader:
 
         self.resources_to_process = chain(
 
-#            zip(
-#                repeat(REFS.surf_map),
-#                ALPHA_IMAGES_DIR.iterdir(),
-#                repeat(load_alpha_image_from_filepath),
-#            ),
+            zip(
+                repeat(SURF_MAP),
+                ALPHA_IMAGES_DIR.iterdir(),
+                repeat(load_alpha_image_from_filepath),
+            ),
 
             zip(
                 repeat(SURF_MAP),
@@ -128,9 +128,12 @@ class ResourceLoader:
 ### utility functions
 
 def load_alpha_image_from_filepath(filepath):
-    image = load_image(str(filepath)).convert()
-    image.set_colorkey((77, 77, 90))
-    return image
+    image = load_image(str(filepath)).convert_alpha()
+    surf = Surface(image.get_size()).convert()
+    surf.set_colorkey((192, 192, 192))
+    surf.fill((192, 192, 192))
+    surf.blit(image, (0, 0))
+    return surf
 
 def load_image_from_filepath(filepath):
     return load_image(str(filepath)).convert()
