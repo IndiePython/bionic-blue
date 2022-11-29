@@ -34,6 +34,6 @@ def get_game_state():
     """Pick appropriate gameplay state, prepare and return it."""
     return (
         REFS.states.level_manager
-        if REFS.data['level'] == 'intro.lvl'
+        if REFS.data['level'] == 'intro'
         else None # REFS.hq_loader
     )

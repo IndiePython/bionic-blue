@@ -16,6 +16,8 @@ from pygame.display import update
 ### local imports
 
 from ...config import (
+    REFS,
+    LEVELS_DIR,
     BLOCKS, BLOCKS_ON_SCREEN,
     ACTORS, ACTORS_ON_SCREEN,
     PROJECTILES,
@@ -29,9 +31,11 @@ from ...pygameconstants import (
 
 from ...ourstdlibs.behaviour import do_nothing
 
+from ...ourstdlibs.pyl import load_pyl
+
 from .player import Player
 
-from .blocks.asphaltblock import AsphaltBlock
+from .blocks.cityblock import CityBlock
 
 from .actors.gruntbot import GruntBot
 
@@ -75,74 +79,12 @@ class LevelManager:
 
         self.state = self
 
-        ### instantiate objects
+        ### get level data and instantiate objects
 
-        level_data = {
+        level_name = REFS.data['level']
 
-            'background_color': (69, 174, 255),
-
-            'layered_objects': {
-
-                'blocks': [
-                    {
-                        'name': 'asphalt_block',
-                        'size': (16, 100),
-                        'pos_name': 'bottomleft',
-                        'pos_value': (0, 124),
-                    },
-                    {
-                        'name': 'asphalt_block',
-                        'size': (320, 16),
-                        'pos_name': 'bottomleft',
-                        'pos_value': (0, 140),
-                    },
-                    {
-                        'name': 'asphalt_block',
-                        'size': (160, 16),
-                        'pos_name': 'bottomleft',
-                        'pos_value': (320, 140),
-                    },
-                    {
-                        'name': 'asphalt_block',
-                        'size': (320, 16),
-                        'pos_name': 'bottomleft',
-                        'pos_value': (480, 96),
-                    },
-                    {
-                        'name': 'asphalt_block',
-                        'size': (16, 30),
-                        'pos_name': 'bottomleft',
-                        'pos_value': (520, 80),
-                    },
-
-                ],
-
-                'actors': [
-                    {
-                        'name': 'grunt_bot',
-                        'pos_name': 'midbottom',
-                        'pos_value': (260, 124),
-                    },
-                    {
-                        'name': 'grunt_bot',
-                        'pos_name': 'midbottom',
-                        'pos_value': (360, 124),
-                    },
-                    {
-                        'name': 'grunt_bot',
-                        'pos_name': 'midbottom',
-                        'pos_value': (490, 80),
-                    },
-                    {
-                        'name': 'grunt_bot',
-                        'pos_name': 'midbottom',
-                        'pos_value': (660, 80),
-                    },
-                ],
-
-            },
-
-        }
+        level_data_path = LEVELS_DIR / level_name / 'data.lvl'
+        level_data = load_pyl(level_data_path)
 
         ### bg
 
@@ -294,8 +236,12 @@ def instantiate(obj_data):
 
     name = obj_data['name']
 
-    if name == 'asphalt_block':
-        return AsphaltBlock(**obj_data)
+    if name == 'city_block':
+        return CityBlock(**obj_data)
 
     elif name == 'grunt_bot':
         return GruntBot(**obj_data)
+
+    raise RuntimeError(
+        "function should return before reaching this spot"
+    )

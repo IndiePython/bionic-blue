@@ -1,0 +1,57 @@
+{
+
+    'background_color': (69, 174, 255),
+
+    'layered_objects': {
+
+        'blocks': [
+            {
+                'name': 'city_block',
+                'size': (16, 100),
+                'pos': (0, 124),
+            },
+            {
+                'name': 'city_block',
+                'size': (320, 16),
+                'pos': (0, 140),
+            },
+            {
+                'name': 'city_block',
+                'size': (160, 16),
+                'pos': (320, 140),
+            },
+            {
+                'name': 'city_block',
+                'size': (320, 16),
+                'pos': (480, 96),
+            },
+            {
+                'name': 'city_block',
+                'size': (16, 30),
+                'pos': (520, 80),
+            },
+
+        ],
+
+        'actors': [
+            {
+                'name': 'grunt_bot',
+                'pos': (260, 124),
+            },
+            {
+                'name': 'grunt_bot',
+                'pos': (360, 124),
+            },
+            {
+                'name': 'grunt_bot',
+                'pos': (490, 80),
+            },
+            {
+                'name': 'grunt_bot',
+                'pos': (660, 80),
+            },
+        ],
+
+    },
+
+}

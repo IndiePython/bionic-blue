@@ -19,7 +19,7 @@ from ..frontprops.defaultexplosion import DefaultExplosion
 
 class GruntBot:
 
-    def __init__(self, name, pos_name, pos_value):
+    def __init__(self, name, pos):
 
         self.health = 5
 
@@ -29,7 +29,7 @@ class GruntBot:
 
         self.aniplayer = (
             AnimationPlayer2D(
-                self, name, 'idle_left', pos_name, pos_value
+                self, name, 'idle_left', 'midbottom', pos
             )
         )
 

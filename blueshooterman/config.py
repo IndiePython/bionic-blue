@@ -13,7 +13,7 @@ REFS = SimpleNamespace()
 REFS.states = SimpleNamespace()
 
 REFS.data = {
-    'level': 'intro.lvl',
+    'level': 'intro',
     'health': 100,
 }
 
@@ -67,6 +67,7 @@ FONTS_DIR = DATA_DIR / 'fonts'
 IMAGES_DIR = DATA_DIR / 'images'
 ANIMATIONS_DIR = DATA_DIR / 'animations'
 SOUNDS_DIR = DATA_DIR / 'sounds'
+LEVELS_DIR = DATA_DIR / 'levels'
 
 NO_ALPHA_IMAGES_DIR = IMAGES_DIR  / 'no_alpha'
 ALPHA_IMAGES_DIR = IMAGES_DIR  / 'alpha'
