@@ -1,57 +1,22 @@
-{
-
-    'background_color': (69, 174, 255),
-
-    'layered_objects': {
-
-        'blocks': [
-            {
-                'name': 'city_block',
-                'size': (16, 100),
-                'pos': (0, 124),
-            },
-            {
-                'name': 'city_block',
-                'size': (320, 16),
-                'pos': (0, 140),
-            },
-            {
-                'name': 'city_block',
-                'size': (160, 16),
-                'pos': (320, 140),
-            },
-            {
-                'name': 'city_block',
-                'size': (320, 16),
-                'pos': (480, 96),
-            },
-            {
-                'name': 'city_block',
-                'size': (16, 30),
-                'pos': (520, 80),
-            },
-
-        ],
-
-        'actors': [
-            {
-                'name': 'grunt_bot',
-                'pos': (260, 124),
-            },
-            {
-                'name': 'grunt_bot',
-                'pos': (360, 124),
-            },
-            {
-                'name': 'grunt_bot',
-                'pos': (490, 80),
-            },
-            {
-                'name': 'grunt_bot',
-                'pos': (660, 80),
-            },
-        ],
-
-    },
-
-}
+{'background_color': (69, 174, 255),
+ 'layered_objects': {'actors': [{'name': 'grunt_bot', 'pos': (490, 80)},
+                                {'name': 'grunt_bot', 'pos': (660, 80)},
+                                {'name': 'grunt_bot', 'pos': (792, 80)},
+                                {'name': 'grunt_bot', 'pos': (360, 128)},
+                                {'name': 'grunt_bot', 'pos': (264, 128)},
+                                {'name': 'grunt_bot', 'pos': (344, 48)}],
+                     'blocks': [{'name': 'city_block',
+                                 'pos': (480, 96),
+                                 'size': (320, 16)},
+                                {'name': 'city_block',
+                                 'pos': (16, 144),
+                                 'size': (464, 16)},
+                                {'name': 'city_block',
+                                 'pos': (0, 144),
+                                 'size': (16, 112)},
+                                {'name': 'city_block',
+                                 'pos': (528, 80),
+                                 'size': (16, 32)},
+                                {'name': 'city_block',
+                                 'pos': (320, 64),
+                                 'size': (128, 16)}]}}
