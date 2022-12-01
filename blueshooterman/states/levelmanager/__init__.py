@@ -62,7 +62,7 @@ class LevelManager:
         self.disable_player_tracking()
 
         ###
-        self.floor_level = 124
+        self.floor_level = 128
 
     def enable_player_tracking(self):
         self.camera_tracking_routine = self.track_player
