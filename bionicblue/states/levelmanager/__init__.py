@@ -81,9 +81,9 @@ class LevelManager:
 
         ### get level data and instantiate objects
 
-        level_name = REFS.data['level']
+        level_name = REFS.data['level_name']
 
-        level_data_path = LEVELS_DIR / level_name / 'data.lvl'
+        level_data_path = LEVELS_DIR / level_name
         level_data = load_pyl(level_data_path)
 
         ### bg

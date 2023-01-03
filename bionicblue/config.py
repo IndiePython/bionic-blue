@@ -13,7 +13,7 @@ REFS = SimpleNamespace()
 REFS.states = SimpleNamespace()
 
 REFS.data = {
-    'level': 'intro',
+    'level_name': 'intro.lvl',
     'health': 100,
 }
 
