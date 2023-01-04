@@ -9,20 +9,25 @@ from pathlib import Path
 
 ###
 
-REFS = SimpleNamespace()
-REFS.states = SimpleNamespace()
+REFS = SimpleNamespace(
 
-REFS.data = {
-    'level_name': 'intro.lvl',
-    'health': 100,
-}
+    states = SimpleNamespace(),
 
-REFS.enable_player_tracking = (
-    lambda: REFS.states.level_manager.enable_player_tracking()
-)
+    msecs = 0,
 
-REFS.disable_player_tracking = (
-    lambda: REFS.states.level_manager.disable_player_tracking()
+    data = {
+        'level_name': 'intro.lvl',
+        'health': 100,
+    },
+
+    enable_player_tracking = (
+        lambda: REFS.states.level_manager.enable_player_tracking()
+    ),
+
+    disable_player_tracking = (
+        lambda: REFS.states.level_manager.disable_player_tracking()
+    ),
+
 )
 
 ###
@@ -34,6 +39,9 @@ MAX_X_SPEED = 4
 SHOOTING_STANCE_MSECS = 300
 DAMAGE_STANCE_MSECS = 400
 DAMAGE_REBOUND_MSECS = 800
+
+MIDDLE_CHARGE_MSECS = 710
+FULL_CHARGE_MSECS = 2700
 
 BLOCKS = set()
 ACTORS = set()

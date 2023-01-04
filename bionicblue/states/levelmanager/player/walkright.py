@@ -9,6 +9,7 @@ from pygame.locals import (
     K_a, K_d,
 
     KEYDOWN,
+    KEYUP,
     K_ESCAPE,
     K_j, K_k
 )
@@ -17,12 +18,11 @@ from pygame.event import get as get_events
 
 from pygame.key import get_pressed as get_pressed_state
 
-from pygame.time import get_ticks as get_msecs
-
 
 ### local imports
 
 from ....config import (
+    REFS,
     PROJECTILES,
     MAX_X_SPEED,
     SHOOTING_STANCE_MSECS,
@@ -56,6 +56,15 @@ class WalkRight:
 
                 elif event.key == K_k:
                     self.jump()
+
+            elif event.type == KEYUP:
+
+                if event.key == K_j:
+
+                    result = self.stop_charging()
+
+                    if result:
+                        self.walk_right_release_charge(result)
 
         ###
 
@@ -92,15 +101,20 @@ class WalkRight:
 
         if not self.x_speed: self.set_state('idle_right')
 
-        if get_msecs() - self.last_shot >= SHOOTING_STANCE_MSECS:
+        msecs = REFS.msecs
+
+        if msecs - self.last_shot >= SHOOTING_STANCE_MSECS:
             self.aniplayer.blend('-shooting')
+
+        if self.charge_start:
+            self.check_charge()
 
         if self.rect.x != x:
             self.avoid_blocks_horizontally()
 
         self.react_to_gravity()
 
-        if get_msecs() - self.last_damage > DAMAGE_REBOUND_MSECS:
+        if msecs - self.last_damage > DAMAGE_REBOUND_MSECS:
             self.aniplayer.restore_constant_drawing()
 
     def walk_right_shoot(self):
@@ -109,4 +123,7 @@ class WalkRight:
         projectile = DefaultProjectile(x_orientation=1, pos_name='center', pos_value=pos_value)
         PROJECTILES.add(projectile)
         self.aniplayer.ensure_animation('shooting_walk_right')
-        self.last_shot = get_msecs()
+        self.charge_start = self.last_shot = REFS.msecs
+
+    def walk_right_release_charge(self, charge_type):
+        ...

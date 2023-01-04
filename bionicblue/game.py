@@ -1,5 +1,8 @@
 """Facility with function to run the game."""
 
+### third-party import
+from pygame.time import get_ticks as get_msecs
+
 ### local imports
 
 from .config import REFS
@@ -19,6 +22,8 @@ def run_game():
     while True:
 
         maintain_fps(FPS)
+
+        REFS.msecs = get_msecs()
 
         state.control()
         state.update()

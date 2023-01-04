@@ -9,6 +9,7 @@ from pygame.locals import (
     K_a, K_d,
 
     KEYDOWN,
+    KEYUP,
     K_ESCAPE,
     K_j, K_k,
 
@@ -18,12 +19,15 @@ from pygame.event import get as get_events
 
 from pygame.key import get_pressed as get_pressed_state
 
-from pygame.time import get_ticks as get_msecs
-
 
 ### local imports
 
-from ....config import PROJECTILES, SHOOTING_STANCE_MSECS, DAMAGE_REBOUND_MSECS
+from ....config import (
+    REFS,
+    PROJECTILES,
+    SHOOTING_STANCE_MSECS,
+    DAMAGE_REBOUND_MSECS,
+)
 
 from .projectiles.default import DefaultProjectile
 
@@ -44,6 +48,7 @@ class IdleLeft:
             elif event.type == KEYDOWN:
 
                 if event.key == K_ESCAPE:
+
                     quit_pygame()
                     quit()
 
@@ -52,6 +57,15 @@ class IdleLeft:
 
                 elif event.key == K_k:
                     self.jump()
+
+            elif event.type == KEYUP:
+
+                if event.key == K_j:
+
+                    result = self.stop_charging()
+
+                    if result:
+                        self.idle_left_release_charge(result)
 
         ###
 
@@ -68,17 +82,22 @@ class IdleLeft:
             self.set_state('walk_right')
 
     def idle_left_update(self):
-        x = self.rect.x
 
-        if get_msecs() - self.last_shot >= SHOOTING_STANCE_MSECS:
+        x = self.rect.x
+        msecs = REFS.msecs
+
+        if msecs - self.last_shot >= SHOOTING_STANCE_MSECS:
             self.aniplayer.blend('-shooting')
+
+        if self.charge_start:
+            self.check_charge()
 
         if self.rect.x != x:
             self.avoid_blocks_horizontally()
 
         self.react_to_gravity()
 
-        if get_msecs() - self.last_damage > DAMAGE_REBOUND_MSECS:
+        if msecs - self.last_damage > DAMAGE_REBOUND_MSECS:
             self.aniplayer.restore_constant_drawing()
 
     def idle_left_shoot(self):
@@ -87,4 +106,8 @@ class IdleLeft:
         projectile = DefaultProjectile(x_orientation=-1, pos_name='center', pos_value=pos_value)
         PROJECTILES.add(projectile)
         self.aniplayer.ensure_animation('shooting_idle_left')
-        self.last_shot = get_msecs()
+
+        self.charge_start = self.last_shot = REFS.msecs
+
+    def idle_left_release_charge(self, charge_type):
+        ...
