@@ -47,7 +47,7 @@ class GruntBot:
 
         if get_msecs() - self.last_damage > 70:
 
-            self.aniplayer.blend('-white')
+            self.aniplayer.restore_surface_cycling()
             self.routine_check = do_nothing
 
     def draw(self):
@@ -65,5 +65,5 @@ class GruntBot:
             append_task(partial(ACTORS.remove, self,))
 
         else:
-            self.aniplayer.blend('+white')
+            self.aniplayer.set_custom_surface_cycling(('whitened', 'default'))
             self.routine_check = self.check_damage_whitening

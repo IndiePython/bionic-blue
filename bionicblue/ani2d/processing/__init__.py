@@ -21,10 +21,39 @@ from ...ourstdlibs.wdeque.main import WalkingDeque
 
 from ...ourstdlibs.tree import get_tree_values
 
-from .constants import EMPTY_SURF, TRANSP_COLORKEY
+from .constants import (
+    TRANSP_COLORKEY,
+    OBLIVIOUS_EMPTY_GETTER,
+)
 
+from .recolor import get_recolored_sprites_data
 from .derived import process_derived_animations
 
+
+
+DEFAULT_VERSIONS = frozenset({'default', 'invisible'})
+
+
+KEY_DEFAULT_PAIRS = (
+
+    # surfaces
+
+    (
+        # key
+        'surfaces',
+        # value
+        {
+            #
+            'default': OBLIVIOUS_EMPTY_GETTER,
+            #
+            'invisible': OBLIVIOUS_EMPTY_GETTER
+        },
+    ),
+
+    # positions
+    ('positions', ((0, 0),)),
+
+)
 
 
 def process_animation_data(animation_dir):
@@ -67,6 +96,40 @@ def process_animation_data(animation_dir):
         for anim_name, anim_data in metadata['animations'].items()
     }
 
+    ### prepare recoloring instructions if requested
+
+    try:
+        recoloring_data = metadata['recolored_surface_versions']
+
+    except KeyError:
+        non_default_versions = set()
+        #
+        recolor_instructions_map = {}
+
+    else:
+        non_default_versions = recoloring_data.keys()
+        #
+        recolor_instructions_map = defaultdict(dict)
+
+        for key, recolor_instructions in recoloring_data.items():
+
+            if key in DEFAULT_VERSIONS:
+
+                raise ValueError(
+                    "Recolored versions cannot be named"
+                    f" either of {DEFAULT_VERSIONS}"
+                )
+
+            recolor_effects = recolor_instructions['effects']
+
+            sprites_identifiers = recolor_instructions['surface_collections']
+
+            for sprites_identifier in sprites_identifiers:
+
+                recolor_instructions_map[sprites_identifier][key] = (
+                    recolor_effects
+                )
+
     ### pxa value grabbing
 
     pxa_paths = [
@@ -82,10 +145,16 @@ def process_animation_data(animation_dir):
 
         pxa_data = load_pyl(str(path))
 
-        pxa_values = all_pxa_values[path.stem] = {}
-        pxa_timing = all_pxa_timing[path.stem] = {}
+        stem = path.stem
+
+        pxa_values = all_pxa_values[stem] = {}
+        pxa_timing = all_pxa_timing[stem] = {}
+
 
         ###
+        surfaces = []
+        append_surface = surfaces.append
+        clear_surfaces = surfaces.clear
 
         for anim_name, anim_data in pxa_data['animations'].items():
 
@@ -94,24 +163,78 @@ def process_animation_data(animation_dir):
             anim_values = pxa_values[anim_name] = {}
 
             ###
+            versions = list(DEFAULT_VERSIONS)
 
-            surfaces = anim_values['surfaces'] = []
+            ###
 
-            sprites_data = anim_data['sprites']
+            sprites_identifier = f'{stem}.{anim_name}'
 
+            if sprites_identifier in recolor_instructions_map:
+
+                version_instructions_map = (
+                    recolor_instructions_map[sprites_identifier]
+                )
+
+                versions.extend(version_instructions_map)
+
+            ###
+
+            surfc_map = anim_values['surface_collections_map'] = {}
+
+            default_sprites_data = anim_data['sprites']
+
+            ###
             base_surf = Surface((size, size)).convert()
             base_surf.fill(TRANSP_COLORKEY)
             base_surf.set_colorkey(TRANSP_COLORKEY)
+            ###
 
-            for sprite_data in sprites_data:
+            for version in versions:
 
-                surf = base_surf.copy()
-                surfaces.append(surf)
+                if version == 'invisible':
 
-                for color, points in sprite_data.items():
-                    for point in points:
-                        surf.set_at(tuple(map(int, point)), color)
+                    surfc_map[version] = OBLIVIOUS_EMPTY_GETTER
+                    continue
 
+                ###
+
+                if version == 'default':
+                    sprites_data = default_sprites_data
+
+                else:
+                    sprites_data = (
+                        get_recolored_sprites_data(
+                            default_sprites_data,
+                            version_instructions_map[version],
+                        )
+                    )
+
+
+                ###
+                for sprite_data in sprites_data:
+
+                    ## create and append surface
+
+                    surf = base_surf.copy()
+                    append_surface(surf)
+
+                    ## paint surface
+
+                    for color, points in sprite_data.items():
+                        for point in points:
+                            surf.set_at(tuple(map(int, point)), color)
+
+                surfc_map[version] = tuple(surfaces)
+                clear_surfaces()
+
+            ### set default surfaces as default for missing non-default
+            ### versions
+
+            default_surfaces = surfc_map['default']
+            for version in non_default_versions:
+                surfc_map.setdefault(version, default_surfaces)
+
+            ###
             anim_values['positions'] = ((0, 0),)
 
             ###
@@ -160,11 +283,6 @@ def process_animation_data(animation_dir):
 
     ## values
 
-    key_default_pairs = (
-        ('surfaces', (EMPTY_SURF,)),
-        ('positions', ((0, 0),)),
-    )
-
     raw_values = metadata['values']
 
     values = {}
@@ -177,20 +295,32 @@ def process_animation_data(animation_dir):
 
             obj_values = anim_values[obj_name] = {}
 
-            for key, default in key_default_pairs:
+            for key, default in KEY_DEFAULT_PAIRS:
 
                 if key in raw_obj_values:
 
                     if key == 'surfaces':
-                        stem, pxa_anim_name = raw_obj_values[key].split('.')
-                        obj_values[key] = all_pxa_values[stem][pxa_anim_name][key]
 
-                    else:
+                        stem, pxa_anim_name = raw_obj_values[key].split('.')
+
+                        obj_values['surface_collections_map'] = (
+                            all_pxa_values
+                            [stem][pxa_anim_name]
+                            ['surface_collections_map']
+                        )
+
+                    elif key == 'positions':
+
                         stem = raw_obj_values[key]
                         obj_values[key] = all_pos_values[stem]
 
                 else:
-                    obj_values[key] = default
+
+                    if key == 'surfaces':
+                        obj_values['surface_collections_map'] = default
+
+                    else:
+                        obj_values[key] = default
 
     ## timing
 

@@ -115,7 +115,7 @@ class WalkLeft:
         self.react_to_gravity()
 
         if msecs - self.last_damage > DAMAGE_REBOUND_MSECS:
-            self.aniplayer.restore_constant_drawing()
+            self.check_invisibility()
 
     def walk_left_shoot(self):
 

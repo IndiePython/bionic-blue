@@ -213,6 +213,42 @@
             },
         },
     },
+    "recolored_surface_versions": {
+        "caustic_blue": {
+            "effects": (
+                ("lightness", "increment", 20),
+            ),
+            "surface_collections" : [
+                "shooter_man.idle_right",
+                "shooter_man.walk_right",
+                "shooter_man.jump_right",
+                "shooter_man.decelerate_right",
+                "shooter_man.shooting_idle_right",
+                "shooter_man.shooting_walk_right",
+                "shooter_man.shooting_decelerate_right",
+                "shooter_man.shooting_jump_right",
+                "shooter_man.hurt_right",
+            ],
+        },
+
+        "caustic_green": {
+            "effects": (
+                ("lightness", "increment", 20),
+                ("hue", "set_from_basic", "green", 5),
+            ),
+            "surface_collections" : [
+                "shooter_man.idle_right",
+                "shooter_man.walk_right",
+                "shooter_man.jump_right",
+                "shooter_man.decelerate_right",
+                "shooter_man.shooting_idle_right",
+                "shooter_man.shooting_walk_right",
+                "shooter_man.shooting_decelerate_right",
+                "shooter_man.shooting_jump_right",
+                "shooter_man.hurt_right",
+            ],
+        },
+    },
     "derived_animations": {
         "idle_left": {
             "operation_name": "flip_x",

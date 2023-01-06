@@ -1,9 +1,6 @@
 
-### third-party imports
-
-from pygame import Rect
-
-from pygame.draw import rect as draw_rect
+### standard library import
+from itertools import chain
 
 
 ### local imports
@@ -120,10 +117,12 @@ class Player(
         self.aniplayer.draw()
 
     def draw_middle_charge_fx(self):
-        draw_rect(SCREEN, 'white', self.rect.inflate(5, 5))
+        """Draw particles to indicate middle charge."""
+        ...
 
     def draw_full_charge_fx(self):
-        draw_rect(SCREEN, 'cyan', self.rect.inflate(5, 5))
+        """Draw particles to indicate full charge."""
+        ...
 
     def avoid_blocks_horizontally(self):
 
@@ -247,7 +246,32 @@ class Player(
 
         self.set_state('hurt')
         self.last_damage = now
-        ap.start_intermittent_drawing()
+
+        ap.set_custom_surface_cycling(
+
+            list(
+
+                chain.from_iterable(
+
+                    ('invisible', item)
+                    for item in ap.cycle_values
+
+                )
+
+            )
+
+        )
+
+    def check_invisibility(self):
+
+        if 'invisible' in self.aniplayer.cycle_values:
+
+            l = list(self.aniplayer.cycle_values)
+
+            while 'invisible' in l:
+                l.remove('invisible')
+
+            self.aniplayer.set_custom_surface_cycling(l)
 
     def check_charge(self):
 
@@ -257,17 +281,28 @@ class Player(
 
             if self.draw_charge_fx != self.draw_full_charge_fx:
 
+                self.aniplayer.set_custom_surface_cycling(
+                    ('caustic_blue', 'invisible', 'caustic_green', 'invisible')
+                    if 'invisible' in self.aniplayer.cycle_values
+                    else ('caustic_blue', 'caustic_green', 'caustic_blue')
+                )
+
                 self.draw_charge_fx = self.draw_full_charge_fx
                 SOUND_MAP['blue_shooter_man_full_charge.wav'].play(-1)
 
-            ### self.aniplayer.set_surf_state_cycling('full_charge')
         elif diff >= MIDDLE_CHARGE_MSECS:
 
             if self.draw_charge_fx != self.draw_middle_charge_fx:
+
+                self.aniplayer.set_custom_surface_cycling(
+                    ('default', 'invisible', 'caustic_blue', 'invisible', 'default')
+                    if 'invisible' in self.aniplayer.cycle_values
+                    else ('default', 'caustic_blue', 'default')
+                )
+
                 self.draw_charge_fx = self.draw_middle_charge_fx
                 SOUND_MAP['blue_shooter_man_middle_charge.wav'].play()
 
-            ### self.aniplayer.set_surf_state_cycling('middle_charge')
 
     def stop_charging(self):
 
@@ -275,7 +310,14 @@ class Player(
 
         diff = msecs - self.charge_start
 
-        ### ('self.aniplayer.disable_surf_state_cycling()')
+        if 'invisible' in self.aniplayer.cycle_values:
+
+            self.aniplayer.set_custom_surface_cycling(
+                ('invisible', 'default')
+            )
+
+        else:
+            self.aniplayer.restore_surface_cycling()
 
         self.charge_start = 0
         SOUND_MAP['blue_shooter_man_full_charge.wav'].stop()

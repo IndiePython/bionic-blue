@@ -20,6 +20,12 @@ from ..config import ANIM_DATA_MAP
 from ..pygameconstants import blit_on_screen
 
 
+
+DEFAULT_CYCLE_VALUES = ('default',)
+GET_DEFAULT = cycle(DEFAULT_CYCLE_VALUES).__next__
+
+
+
 class AnimationPlayer2D:
 
     def __init__(
@@ -59,17 +65,9 @@ class AnimationPlayer2D:
         setattr(obj.rect, pos_name, pos_value)
 
         ###
-        self.normal_draw = self.draw_constantly
-
-        ###
+        self.cycle_values = DEFAULT_CYCLE_VALUES
+        self.next_surf_version = GET_DEFAULT
         self.switch_animation(anim_name)
-
-    def blend(self, directive):
-
-        try: anim_name = self.blending[self.anim_name][directive]
-        except KeyError: return
-
-        self.ensure_animation(anim_name)
 
     def switch_animation(self, anim_name):
         ###
@@ -89,7 +87,7 @@ class AnimationPlayer2D:
             obj.set_positioning()
 
         ###
-        self.draw = self.delayed_draw
+        self.draw = self.no_walk_draw
 
     def clear_rotations(self):
 
@@ -142,7 +140,7 @@ class AnimationPlayer2D:
 
                   obmap[obj_name],
 
-                  anim_values[obj_name]['surfaces'],
+                  anim_values[obj_name]['surface_collections_map'],
                   anim_timing[obj_name]['surface_indices'],
 
                   anim_values[obj_name]['positions'],
@@ -202,34 +200,36 @@ class AnimationPlayer2D:
                 child_data.get('children', ())
             )
 
-    def no_walk_pos_update(self):
+    def blend(self, directive):
 
-        for (
+        try: anim_name = self.blending[self.anim_name][directive]
+        except KeyError: return
 
-            obj,
-
-            _,
-            _,
-
-            positions,
-            position_indices,
-
-        ) in self.walking_data:
-
-            pos_index = position_indices[0]
-            obj.set_pos(positions[pos_index])
+        self.ensure_animation(anim_name)
 
     def ensure_animation(self, anim_name):
         if self.anim_name != anim_name:
             self.switch_animation(anim_name)
 
-    def draw_constantly(self):
+    def restore_surface_cycling(self):
+
+        self.cycle_values = DEFAULT_CYCLE_VALUES
+        self.next_surf_version = GET_DEFAULT
+
+    def set_custom_surface_cycling(self, cycle_values):
+
+        self.cycle_values = cycle_values
+        self.next_surf_version = cycle(cycle_values).__next__
+
+    def walk_and_draw(self):
+
+        version = self.next_surf_version()
 
         for (
 
             obj,
 
-            surfaces,
+            surface_collections_map,
             surface_indices,
 
             positions,
@@ -238,7 +238,7 @@ class AnimationPlayer2D:
         ) in self.walking_data:
 
             surface_indices.walk(1)
-            obj.image = surfaces[surface_indices[0]]
+            obj.image = surface_collections_map[version][surface_indices[0]]
 
             position_indices.walk(1)
             obj.set_pos(positions[position_indices[0]])
@@ -247,13 +247,15 @@ class AnimationPlayer2D:
         for method in self.drawing_methods:
             method()
 
-    def delayed_draw(self):
+    def no_walk_draw(self):
+
+        version = self.next_surf_version()
 
         for (
 
             obj,
 
-            surfaces,
+            surface_collections_map,
             surface_indices,
 
             positions,
@@ -261,7 +263,8 @@ class AnimationPlayer2D:
 
         ) in self.walking_data:
 
-            obj.image = surfaces[surface_indices[0]]
+            obj.image = surface_collections_map[version][surface_indices[0]]
+
             obj.set_pos(positions[position_indices[0]])
 
         ###
@@ -270,48 +273,8 @@ class AnimationPlayer2D:
             method()
 
         ###
-        self.draw = self.normal_draw
+        self.draw = self.walk_and_draw
 
-    def start_intermittent_drawing(self, cycle_values=(0, 1)):
-
-        self.must_draw = cycle(cycle_values).__next__
-
-        self.normal_draw = self.intermittent_draw
-
-        if self.draw != self.delayed_draw:
-            self.draw = self.intermittent_draw
-
-    def restore_constant_drawing(self):
-
-        self.normal_draw = self.draw_constantly
-
-        if self.draw != self.delayed_draw:
-            self.draw = self.draw_constantly
-
-    def intermittent_draw(self):
-
-        if self.must_draw():
-            self.draw_constantly()
-
-        else:
-
-            for (
-
-                obj,
-
-                surfaces,
-                surface_indices,
-
-                positions,
-                position_indices,
-
-            ) in self.walking_data:
-
-                surface_indices.walk(1)
-                obj.image = surfaces[surface_indices[0]]
-
-                position_indices.walk(1)
-                obj.set_pos(positions[position_indices[0]])
 
 
 class AnimationObject2D:

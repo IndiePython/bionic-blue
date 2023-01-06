@@ -3,17 +3,12 @@
 from pygame.transform import flip as flip_surface
 
 
-### local imports
-
+### local import
 from ...ourstdlibs.wdeque.main import WalkingDeque
-
-from .constants import EMPTY_SURF, TRANSP_COLORKEY
 
 
 
 def process_derived_animations(metadata, values, timing):
-
-    ### derived animations
 
     sorted_derived_animations = sorted(
 
@@ -44,53 +39,24 @@ def process_derived_animations(metadata, values, timing):
 
                 obj_values = anim_values[obj_name] = {}
 
-                obj_values['surfaces'] = tuple(
-                    flip_surface(surf, True, False)
-                    for surf in target_obj_values['surfaces']
-                )
+                ## surfaces
 
-                obj_values['positions'] = target_obj_values['positions']
+                surfc_map = obj_values['surface_collections_map'] = {}
 
-            ##
+                for version, target_surf_collection in (
+                    target_obj_values['surface_collections_map'].items()
+                ):
 
-            for obj_name, target_obj_timing in target_anim_timing.items():
+                    if version == 'invisible':
+                        surfc_map[version] = target_surf_collection
+                        continue
 
-                obj_timing = anim_timing[obj_name] = {}
+                    surfc_map[version] = tuple(
+                        flip_surface(surf, True, False)
+                        for surf in target_surf_collection
+                    )
 
-                for key in ('surface_indices', 'position_indices'):
-                    obj_timing[key] = WalkingDeque(target_obj_timing[key])
-
-        elif operation_name == 'whiten':
-
-            for obj_name, target_obj_values in target_anim_values.items():
-
-                obj_values = anim_values[obj_name] = {}
-
-                surfs = []
-
-                for surf in target_obj_values['surfaces']:
-
-                    if surf != EMPTY_SURF:
-
-                        new_surf = surf.copy()
-                        new_surf.fill(TRANSP_COLORKEY)
-                        w, h = new_surf.get_size()
-
-                        for x in range(w):
-
-                            for y in range(h):
-
-                                c = surf.get_at((x, y))[:3]
-
-                                if c != TRANSP_COLORKEY:
-                                    new_surf.set_at((x, y), (255, 255, 255))
-
-                    else:
-                        new_surf = EMPTY_SURF
-
-                    surfs.append(new_surf)
-
-                obj_values['surfaces'] = tuple(surfs)
+                ## positions
                 obj_values['positions'] = target_obj_values['positions']
 
             ##
@@ -108,7 +74,15 @@ def process_derived_animations(metadata, values, timing):
 
                 obj_values = anim_values[obj_name] = {}
 
-                obj_values['surfaces'] = target_obj_values['surfaces']
+                ## surfaces
+
+                surfc_map = obj_values['surface_collections_map'] = {}
+
+                surfc_map.update(
+                    target_obj_values['surface_collections_map']
+                )
+
+                ### positions
                 obj_values['positions'] = target_obj_values['positions']
 
 
