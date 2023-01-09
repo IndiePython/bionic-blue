@@ -42,6 +42,9 @@ from ..textman import render_text
 from ..ani2d.processing import process_animation_data
 
 
+ALLOWED_SOUND_FILE_EXTENSIONS = frozenset(('.ogg', '.wav'))
+
+
 ### gather animation resources
 
 class ResourceLoader:
@@ -75,7 +78,7 @@ class ResourceLoader:
                 (
                     path for path in SOUNDS_DIR.iterdir()
                     if path.is_file()
-                    if path.suffix.lower() == '.wav'
+                    if path.suffix.lower() in ALLOWED_SOUND_FILE_EXTENSIONS
                 ),
                 repeat(load_sound_from_filepath),
             ),

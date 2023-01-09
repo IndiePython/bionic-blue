@@ -52,13 +52,15 @@ class DefaultProjectile:
 
             if colliderect(actor.rect):
 
-                try: actor.damage(1)
-                except AttributeError:
-                    pass
+                if actor.health > 0:
 
-                self.trigger_kill()
-                SOUND_MAP['default_projectile_hit.wav'].play()
-                return
+                    try: actor.damage(1)
+                    except AttributeError:
+                        pass
+
+                    self.trigger_kill()
+                    SOUND_MAP['default_projectile_hit.wav'].play()
+                    return
 
         for block in BLOCKS_ON_SCREEN:
 

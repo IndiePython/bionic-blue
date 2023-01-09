@@ -324,14 +324,15 @@ class Player(
         SOUND_MAP['blue_shooter_man_middle_charge.wav'].stop()
         self.draw_charge_fx = do_nothing
 
-        if diff >= MIDDLE_CHARGE_MSECS:
-            return 'middle'
-
-        elif diff >= FULL_CHARGE_MSECS:
+        if diff >= FULL_CHARGE_MSECS:
             return 'full'
+
+        elif diff >= MIDDLE_CHARGE_MSECS:
+            return 'middle'
 
     def die(self):
 
+        self.stop_charging()
         self.set_state('dead')
         self.aniplayer = self.death_rings_aniplayer
 

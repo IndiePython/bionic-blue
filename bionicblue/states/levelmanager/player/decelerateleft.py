@@ -31,6 +31,7 @@ from ....config import (
 )
 
 from .projectiles.default import DefaultProjectile
+from .projectiles.chargedshot import ChargedShot
 
 
 
@@ -62,7 +63,7 @@ class DecelerateLeft:
 
             elif event.type == KEYUP:
 
-                if event.key == K_j:
+                if event.key == K_j and self.charge_start:
 
                     result = self.stop_charging()
 
@@ -117,10 +118,31 @@ class DecelerateLeft:
     def decelerate_left_shoot(self):
 
         pos_value = self.rect.move(0, -2).midleft
-        projectile = DefaultProjectile(x_orientation=-1, pos_name='center', pos_value=pos_value)
-        PROJECTILES.add(projectile)
+
+        PROJECTILES.add(
+            DefaultProjectile(
+                x_orientation=-1,
+                pos_name='center',
+                pos_value=pos_value,
+            )
+        )
+
         self.aniplayer.blend('+shooting')
         self.charge_start = REFS.msecs
 
     def decelerate_left_release_charge(self, charge_type):
-        ...
+
+        pos_value = self.rect.move(-10, -1).midleft
+
+        PROJECTILES.add(
+            ChargedShot(
+                charge_type,
+                x_orientation=-1,
+                pos_name='center',
+                pos_value=pos_value,
+            )
+        )
+
+        self.aniplayer.blend('+shooting')
+
+        self.last_shot = REFS.msecs

@@ -1,0 +1,74 @@
+{
+    "name": "full_charged_shot",
+    "geometry": {
+        "shot" : {
+            "size" : (12, 14),
+            "art_size" : (16, 16),
+            "art_anchorage" : ('midbottom', 'midbottom'),
+        },
+    },
+    "objects" : {
+        "shot" : {"geometry": "shot"},
+    },
+    "existing_structures" : {
+        "airborne" : {"tree" : {"name": "shot"}},
+    },
+    "animations" :{
+
+        "appearing_right": {"structure": "airborne"},
+        "appearing_left": {"structure": "airborne"},
+        "idle_right": {"structure": "airborne"},
+        "idle_left": {"structure": "airborne"},
+        "disappearing_right": {"structure": "airborne"},
+        "disappearing_left": {"structure": "airborne"},
+
+    },
+    "values": {
+        "appearing_right": {
+            "shot": {
+                "surfaces": "full_charged_shot.appearing_right",
+            },
+        },
+        "idle_right": {
+            "shot": {
+                "surfaces": "full_charged_shot.idle_right",
+            },
+        },
+        "disappearing_right": {
+            "shot": {
+                "surfaces": "full_charged_shot.disappearing_right",
+            },
+        },
+    },
+    "timing": {
+        "appearing_right": {
+            "shot": {
+                "surface_indices": "full_charged_shot.appearing_right",
+            },
+        },
+        "idle_right": {
+            "shot": {
+                "surface_indices": "full_charged_shot.idle_right",
+            },
+        },
+        "disappearing_right": {
+            "shot": {
+                "surface_indices": "full_charged_shot.disappearing_right",
+            },
+        },
+    },
+    "derived_animations": {
+        "appearing_left": {
+            "operation_name": "flip_x",
+            "target": "appearing_right",
+        },
+        "idle_left": {
+            "operation_name": "flip_x",
+            "target": "idle_right",
+        },
+        "disappearing_left": {
+            "operation_name": "flip_x",
+            "target": "disappearing_right",
+        },
+    },
+}
