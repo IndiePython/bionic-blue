@@ -10,6 +10,7 @@ from ....config import (
     SOUND_MAP,
     GRAVITY_ACCEL,
     MAX_Y_SPEED,
+    MIDDLE_PROPS_ON_SCREEN,
     BLOCKS_ON_SCREEN,
     DAMAGE_REBOUND_MSECS,
     MIDDLE_CHARGE_MSECS,
@@ -43,6 +44,10 @@ from .decelerateleft import DecelerateLeft
 from .hurt import Hurt
 from .dead import Dead
 
+## functions
+
+from .chargingparticles import draw_charging_particles
+
 
 class Player(
     TeleportingIn,
@@ -58,7 +63,11 @@ class Player(
 
     def __init__(self):
 
+        draw_charging_particles.player = self
+
         self.midair = False
+
+        self.ladder = None
 
         self.death_rings_aniplayer = (
             AnimationPlayer2D(self, 'death_rings', 'expanding')
@@ -71,7 +80,7 @@ class Player(
         )
 
         ###
-        self.draw_charge_fx = do_nothing
+        self.draw_charging_fx = do_nothing
 
         ###
 
@@ -109,20 +118,9 @@ class Player(
             method = getattr(self, f'{state_name}_{operation_name}')
             setattr(self, operation_name, method)
 
-        if state_name in self.aniplayer.anim_names:
-            self.aniplayer.switch_animation(state_name)
-
     def draw(self):
-        self.draw_charge_fx()
+        self.draw_charging_fx()
         self.aniplayer.draw()
-
-    def draw_middle_charge_fx(self):
-        """Draw particles to indicate middle charge."""
-        ...
-
-    def draw_full_charge_fx(self):
-        """Draw particles to indicate full charge."""
-        ...
 
     def avoid_blocks_horizontally(self):
 
@@ -211,18 +209,37 @@ class Player(
     def jump(self):
 
         if not self.midair:
+
+            self.ladder = None
+
             self.y_speed += self.jump_dy
+
             SOUND_MAP['blue_shooter_man_jump.wav'].play()
 
+            self.aniplayer.switch_animation(
+                'jump_right'
+                if 'right' in self.state_name
+                else 'jump_left'
+            )
+
+    def release_ladder(self):
+
+        self.ladder = None
+
+        self.aniplayer.switch_animation(
+            'jump_right'
+            if 'right' in self.state_name
+            else 'jump_left'
+        )
+
     def damage(self, amount):
+
         if self.state_name == 'dead': return
 
         now = REFS.msecs
 
         if now - self.last_damage <= DAMAGE_REBOUND_MSECS:
             return
-
-        ap = self.aniplayer
 
         self.health_column.damage(amount)
 
@@ -233,18 +250,28 @@ class Player(
 
         else: SOUND_MAP['blue_shooter_man_hurt.wav'].play()
 
-        new_anim = 'hurt_right' if ap.anim_name.endswith('right') else 'hurt_left'
+        ap = self.aniplayer
+
+        new_anim = (
+            'hurt_right'
+            if 'right' in self.state_name
+            else 'hurt_left'
+        )
+
         ap.switch_animation(new_anim)
 
-        self.y_speed = -5
+        if not self.ladder:
 
-        if new_anim == 'hurt_right':
-            self.x_speed = -1
+            if new_anim == 'hurt_right':
+                self.x_speed = -1
 
-        else:
-            self.x_speed = 1
+            else:
+                self.x_speed = 1
+
+            self.y_speed = -5
 
         self.set_state('hurt')
+
         self.last_damage = now
 
         ap.set_custom_surface_cycling(
@@ -273,13 +300,50 @@ class Player(
 
             self.aniplayer.set_custom_surface_cycling(l)
 
+    def check_ladder(self):
+
+        if self.ladder:
+            return
+
+        rect = self.rect
+
+        ladders = tuple(
+            prop
+            for prop in MIDDLE_PROPS_ON_SCREEN
+            if 'Ladder' in prop.__class__.__name__
+            if prop.rect.colliderect(rect)
+        )
+
+        if not ladders: return
+
+        closest_ladder = min(
+
+            ##
+            ladders,
+            ##
+            key=lambda ladder: abs(ladder.rect.x - rect.x)
+
+        )
+
+        rect.clamp_ip(closest_ladder.rect)
+        rect.centerx = closest_ladder.rect.centerx
+
+        self.ladder = closest_ladder
+
+        self.x_speed = 0
+        self.y_speed = 0
+
+        self.midair = False
+
+        self.aniplayer.switch_animation('climbing')
+
     def check_charge(self):
 
         diff = REFS.msecs - self.charge_start
 
         if diff >= FULL_CHARGE_MSECS:
 
-            if self.draw_charge_fx != self.draw_full_charge_fx:
+            if self.draw_charging_fx != do_nothing:
 
                 self.aniplayer.set_custom_surface_cycling(
                     ('caustic_blue', 'invisible', 'caustic_green', 'invisible')
@@ -287,12 +351,12 @@ class Player(
                     else ('caustic_blue', 'caustic_green', 'caustic_blue')
                 )
 
-                self.draw_charge_fx = self.draw_full_charge_fx
+                self.draw_charging_fx = do_nothing
                 SOUND_MAP['blue_shooter_man_full_charge.wav'].play(-1)
 
         elif diff >= MIDDLE_CHARGE_MSECS:
 
-            if self.draw_charge_fx != self.draw_middle_charge_fx:
+            if self.draw_charging_fx != draw_charging_particles:
 
                 self.aniplayer.set_custom_surface_cycling(
                     ('default', 'invisible', 'caustic_blue', 'invisible', 'default')
@@ -300,7 +364,7 @@ class Player(
                     else ('default', 'caustic_blue', 'default')
                 )
 
-                self.draw_charge_fx = self.draw_middle_charge_fx
+                self.draw_charging_fx =  draw_charging_particles
                 SOUND_MAP['blue_shooter_man_middle_charge.wav'].play()
 
 
@@ -322,7 +386,7 @@ class Player(
         self.charge_start = 0
         SOUND_MAP['blue_shooter_man_full_charge.wav'].stop()
         SOUND_MAP['blue_shooter_man_middle_charge.wav'].stop()
-        self.draw_charge_fx = do_nothing
+        self.draw_charging_fx = do_nothing
 
         if diff >= FULL_CHARGE_MSECS:
             return 'full'

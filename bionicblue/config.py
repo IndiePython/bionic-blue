@@ -8,6 +8,9 @@ from pathlib import Path
 
 
 ###
+COLORKEY = (192, 192, 192)
+
+###
 
 REFS = SimpleNamespace(
 
@@ -46,10 +49,12 @@ FULL_CHARGE_MSECS = 2700
 BLOCKS = set()
 ACTORS = set()
 PROJECTILES = set()
+MIDDLE_PROPS = set()
 FRONT_PROPS = set()
 
 BLOCKS_ON_SCREEN = set()
 ACTORS_ON_SCREEN = set()
+MIDDLE_PROPS_ON_SCREEN = set()
 
 ###
 
@@ -76,6 +81,7 @@ IMAGES_DIR = DATA_DIR / 'images'
 ANIMATIONS_DIR = DATA_DIR / 'animations'
 SOUNDS_DIR = DATA_DIR / 'sounds'
 LEVELS_DIR = DATA_DIR / 'levels'
+PARTICLES_DIR = DATA_DIR / 'particles'
 
 NO_ALPHA_IMAGES_DIR = IMAGES_DIR  / 'no_alpha'
 ALPHA_IMAGES_DIR = IMAGES_DIR  / 'alpha'

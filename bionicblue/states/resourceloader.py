@@ -26,6 +26,7 @@ from pygame.mixer import Sound
 
 from ..config import (
     REFS,
+    COLORKEY,
     SURF_MAP,
     ANIM_DATA_MAP,
     SOUND_MAP,
@@ -133,8 +134,8 @@ class ResourceLoader:
 def load_alpha_image_from_filepath(filepath):
     image = load_image(str(filepath)).convert_alpha()
     surf = Surface(image.get_size()).convert()
-    surf.set_colorkey((192, 192, 192))
-    surf.fill((192, 192, 192))
+    surf.set_colorkey(COLORKEY)
+    surf.fill(COLORKEY)
     surf.blit(image, (0, 0))
     return surf
 

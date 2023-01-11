@@ -203,7 +203,8 @@ class AnimationPlayer2D:
     def blend(self, directive):
 
         try: anim_name = self.blending[self.anim_name][directive]
-        except KeyError: return
+        except KeyError:
+            return
 
         self.ensure_animation(anim_name)
 

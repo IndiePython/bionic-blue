@@ -2,9 +2,9 @@
     "name": "full_charged_shot",
     "geometry": {
         "shot" : {
-            "size" : (12, 14),
+            "size" : (10, 10),
             "art_size" : (16, 16),
-            "art_anchorage" : ('midbottom', 'midbottom'),
+            "art_anchorage" : ('center', 'center'),
         },
     },
     "objects" : {

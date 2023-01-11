@@ -7,6 +7,7 @@ from pygame.locals import (
 
     QUIT,
     K_a, K_d,
+    K_w,
 
     KEYDOWN,
     KEYUP,
@@ -58,6 +59,17 @@ class WalkRight:
                 elif event.key == K_k:
                     self.jump()
 
+                elif event.key == K_w:
+
+                    self.check_ladder()
+
+                    if self.ladder:
+
+                        self.set_state('idle_right')
+                        self.aniplayer.switch_animation('climbing')
+
+                        return
+
             elif event.type == KEYUP:
 
                 if event.key == K_j and self.charge_start:
@@ -77,10 +89,12 @@ class WalkRight:
 
             if self.aniplayer.anim_name == 'shooting_walk_right':
                 self.set_state('decelerate_right')
+                self.aniplayer.switch_animation('decelerate_right')
                 self.aniplayer.blend('+shooting')
 
             else:
                 self.set_state('decelerate_right')
+                self.aniplayer.switch_animation('decelerate_right')
 
         elif pressed_state[K_d]:
             self.x_accel = min(self.x_accel + 1, 2)
@@ -100,7 +114,9 @@ class WalkRight:
 
         self.rect.x += self.x_speed
 
-        if not self.x_speed: self.set_state('idle_right')
+        if not self.x_speed:
+            self.set_state('idle_right')
+            self.aniplayer.switch_animation('idle_right')
 
         msecs = REFS.msecs
 
@@ -135,7 +151,7 @@ class WalkRight:
 
     def walk_right_release_charge(self, charge_type):
 
-        pos_value = self.rect.move(10, -1).midright
+        pos_value = self.rect.move(10, -2).midright
 
         PROJECTILES.add(
             ChargedShot(

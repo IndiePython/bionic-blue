@@ -77,14 +77,20 @@ class DecelerateRight:
             self.x_accel = max(self.x_accel - 1, 0)
 
             if self.x_speed <= 0:
+
                 self.set_state('walk_left')
+                self.aniplayer.switch_animation('walk_left')
 
         elif pressed_state[K_d]:
+
             self.x_accel += 1
             self.set_state('walk_right')
+            self.aniplayer.switch_animation('walk_right')
 
         elif self.x_speed == 0:
+
             self.set_state('idle_right')
+            self.aniplayer.switch_animation('idle_right')
 
     def decelerate_right_update(self):
 
@@ -128,7 +134,7 @@ class DecelerateRight:
 
     def decelerate_right_release_charge(self, charge_type):
 
-        pos_value = self.rect.move(10, -1).midright
+        pos_value = self.rect.move(10, -2).midright
 
         PROJECTILES.add(
             ChargedShot(

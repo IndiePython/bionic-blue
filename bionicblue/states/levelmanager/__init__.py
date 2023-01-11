@@ -18,6 +18,7 @@ from pygame.display import update
 from ...config import (
     REFS,
     LEVELS_DIR,
+    MIDDLE_PROPS, MIDDLE_PROPS_ON_SCREEN,
     BLOCKS, BLOCKS_ON_SCREEN,
     ACTORS, ACTORS_ON_SCREEN,
     PROJECTILES,
@@ -35,12 +36,15 @@ from ...ourstdlibs.pyl import load_pyl
 
 from .player import Player
 
+from .middleprops.ladder import Ladder
+
 from .blocks.cityblock import CityBlock
 
 from .actors.gruntbot import GruntBot
 
 
 LAYER_DATA_PAIRS = [
+    (MIDDLE_PROPS, 'middleprops'),
     (BLOCKS, 'blocks'),
     (ACTORS, 'actors'),
 ]
@@ -106,6 +110,16 @@ class LevelManager:
         self.player.control()
 
     def update(self):
+
+        MIDDLE_PROPS_ON_SCREEN.clear()
+        MIDDLE_PROPS_ON_SCREEN.update(
+            prop
+            for prop in MIDDLE_PROPS
+            if screen_colliderect(prop.rect)
+        )
+
+        for prop in MIDDLE_PROPS_ON_SCREEN:
+            prop.update()
         
         BLOCKS_ON_SCREEN.clear()
         BLOCKS_ON_SCREEN.update(
@@ -176,6 +190,9 @@ class LevelManager:
 
     def move_level(self, diff):
 
+        for prop in MIDDLE_PROPS:
+            prop.rect.move_ip(diff)
+
         for block in BLOCKS:
             block.rect.move_ip(diff)
 
@@ -196,6 +213,9 @@ class LevelManager:
 
         for projectile in PROJECTILES:
             projectile.draw()
+
+        for prop in MIDDLE_PROPS_ON_SCREEN:
+            prop.draw()
 
         for block in BLOCKS_ON_SCREEN:
             block.draw()
@@ -241,6 +261,9 @@ def instantiate(obj_data):
 
     elif name == 'grunt_bot':
         return GruntBot(**obj_data)
+
+    elif name == 'ladder':
+        return Ladder(**obj_data)
 
     raise RuntimeError(
         "function should return before reaching this spot"
