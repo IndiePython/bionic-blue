@@ -1,6 +1,6 @@
 
-### standard library imports
-from itertools import chain, cycle
+### standard library import
+from itertools import chain
 
 
 ### third-party imports
@@ -19,6 +19,8 @@ from ....config import PARTICLES_DIR, COLORKEY
 from ....pygameconstants import blit_on_screen
 
 from ....ourstdlibs.pyl import load_pyl
+
+from ....ourstdlibs.wdeque.main import WalkingDeque
 
 
 rect = Rect(0, 0, 0, 0)
@@ -61,7 +63,7 @@ def prepare_charging_particles():
 
         surf = base_surf.copy()
 
-        for particle_index in range(16):
+        for particle_index in range(8):
 
             pos = pos_map[particle_index][pos_index]
             draw_rect(surf, 'white', (*(pos + offset), 1, 1))
@@ -69,9 +71,16 @@ def prepare_charging_particles():
         surfs.append(surf)
 
 prepare_charging_particles()
-next_surf = cycle(surfs).__next__
+
+surfs_wdeque = WalkingDeque(surfs)
+walk_surfs = surfs_wdeque.walk
+
+surfs.clear()
 
 def draw_charging_particles():
 
     rect.center = draw_charging_particles.player.rect.center
-    blit_on_screen(next_surf(), rect)
+    blit_on_screen(surfs_wdeque[0], rect)
+    walk_surfs(1)
+
+draw_charging_particles.restore_animation = surfs_wdeque.restore_walking

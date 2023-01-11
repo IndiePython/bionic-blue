@@ -358,13 +358,15 @@ class Player(
 
             if self.draw_charging_fx != draw_charging_particles:
 
+                self.draw_charging_fx = draw_charging_particles
+                draw_charging_particles.restore_animation()
+
                 self.aniplayer.set_custom_surface_cycling(
                     ('default', 'invisible', 'caustic_blue', 'invisible', 'default')
                     if 'invisible' in self.aniplayer.cycle_values
                     else ('default', 'caustic_blue', 'default')
                 )
 
-                self.draw_charging_fx =  draw_charging_particles
                 SOUND_MAP['blue_shooter_man_middle_charge.wav'].play()
 
 

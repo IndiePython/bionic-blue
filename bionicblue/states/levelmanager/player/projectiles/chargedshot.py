@@ -84,7 +84,6 @@ class ChargedShot:
 
     def moving_update(self):
         
-        self.rect.x += self.x_speed
         colliderect = self.rect.colliderect
 
         if not colliderect(SCREEN_RECT):
@@ -110,6 +109,8 @@ class ChargedShot:
             if colliderect(block.rect):
                 self.trigger_disappearing(block)
                 return
+
+        self.rect.x += self.x_speed
 
     def trigger_disappearing(self, colliding_obj):
 
