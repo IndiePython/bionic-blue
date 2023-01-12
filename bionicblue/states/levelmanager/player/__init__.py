@@ -330,8 +330,7 @@ class Player(
 
         self.ladder = closest_ladder
 
-        self.x_speed = 0
-        self.y_speed = 0
+        self.x_accel = self.x_speed = self.y_speed = 0
 
         self.midair = False
 
