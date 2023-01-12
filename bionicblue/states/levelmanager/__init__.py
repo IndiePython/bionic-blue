@@ -18,6 +18,7 @@ from pygame.display import update
 from ...config import (
     REFS,
     LEVELS_DIR,
+    BACK_PROPS, BACK_PROPS_ON_SCREEN,
     MIDDLE_PROPS, MIDDLE_PROPS_ON_SCREEN,
     BLOCKS, BLOCKS_ON_SCREEN,
     ACTORS, ACTORS_ON_SCREEN,
@@ -36,6 +37,8 @@ from ...ourstdlibs.pyl import load_pyl
 
 from .player import Player
 
+from .backprops.citywall import CityWall
+
 from .middleprops.ladder import Ladder
 
 from .blocks.cityblock import CityBlock
@@ -44,6 +47,7 @@ from .actors.gruntbot import GruntBot
 
 
 LAYER_DATA_PAIRS = [
+    (BACK_PROPS, 'backprops'),
     (MIDDLE_PROPS, 'middleprops'),
     (BLOCKS, 'blocks'),
     (ACTORS, 'actors'),
@@ -111,6 +115,25 @@ class LevelManager:
 
     def update(self):
 
+        ### must update player first, since it may move and cause the
+        ### camera to move as well, which causes the level to move
+
+        self.player.update()
+        self.camera_tracking_routine()
+
+        ### now that the level may or may not have moved, we
+        ### update what ended up on the screen
+
+        BACK_PROPS_ON_SCREEN.clear()
+        BACK_PROPS_ON_SCREEN.update(
+            prop
+            for prop in BACK_PROPS
+            if screen_colliderect(prop.rect)
+        )
+
+        for prop in BACK_PROPS_ON_SCREEN:
+            prop.update()
+
         MIDDLE_PROPS_ON_SCREEN.clear()
         MIDDLE_PROPS_ON_SCREEN.update(
             prop
@@ -131,8 +154,6 @@ class LevelManager:
         for block in BLOCKS_ON_SCREEN:
             block.update()
 
-        self.player.update()
-
         ACTORS_ON_SCREEN.clear()
         ACTORS_ON_SCREEN.update(
             actor
@@ -152,9 +173,6 @@ class LevelManager:
 
         ###
         execute_tasks()
-
-        ###
-        self.camera_tracking_routine()
 
         ###
         self.floor_level_routine()
@@ -190,6 +208,9 @@ class LevelManager:
 
     def move_level(self, diff):
 
+        for prop in BACK_PROPS:
+            prop.rect.move_ip(diff)
+
         for prop in MIDDLE_PROPS:
             prop.rect.move_ip(diff)
 
@@ -211,11 +232,14 @@ class LevelManager:
 
         blit_on_screen(self.bg, (0, 0))
 
-        for projectile in PROJECTILES:
-            projectile.draw()
+        for prop in BACK_PROPS_ON_SCREEN:
+            prop.draw()
 
         for prop in MIDDLE_PROPS_ON_SCREEN:
             prop.draw()
+
+        for projectile in PROJECTILES:
+            projectile.draw()
 
         for block in BLOCKS_ON_SCREEN:
             block.draw()
@@ -256,7 +280,10 @@ def instantiate(obj_data):
 
     name = obj_data['name']
 
-    if name == 'city_block':
+    if name == 'city_wall':
+        return CityWall(**obj_data)
+
+    elif name == 'city_block':
         return CityBlock(**obj_data)
 
     elif name == 'grunt_bot':
