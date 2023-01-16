@@ -37,7 +37,7 @@ pre_init_mixer(frequency=44100)
 
 init_pygame()
 
-set_caption('Blue Shooter Man', 'BSM')
+set_caption('Bionic Blue', 'BB')
 
 SCREEN = set_mode((320, 180), SCALED, 32)
 SCREEN.fill(THECOLORS['white'])
