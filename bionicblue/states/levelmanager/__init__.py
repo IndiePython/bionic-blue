@@ -38,6 +38,8 @@ from ...ourstdlibs.behaviour import do_nothing
 
 from ...ourstdlibs.pyl import load_pyl
 
+from ...textman import render_text
+
 from .player import Player
 
 from .backprops.citywall import CityWall
@@ -47,6 +49,8 @@ from .middleprops.ladder import Ladder
 from .blocks.cityblock import CityBlock
 
 from .actors.gruntbot import GruntBot
+
+from .prototypemessage import message
 
 
 LAYER_DATA_PAIRS = [
@@ -60,6 +64,21 @@ LAYER_DATA_PAIRS = [
 class LevelManager:
 
     def __init__(self):
+
+        self.controls_panels = [
+
+            render_text(f' {text} ', 'regular', 12)
+
+            for text in (
+                'a,d : left/right',
+                'j,k : shoot/jump',
+                'w,s : up/down ladder',
+                'ESC : quit',
+            )
+
+        ]
+
+        self.controls_panels.reverse()
 
         self.control = self.control_player
 
@@ -117,6 +136,8 @@ class LevelManager:
             for obj_data in objs_data:
                 layer.add(instantiate(obj_data))
 
+        ###
+        BACK_PROPS.add(message)
 
     def control_player(self):
         self.player.control()
@@ -275,6 +296,14 @@ class LevelManager:
 #            1,
 #        )
         ############################
+
+        x = 1
+        y = 180 - 18
+
+        for surf in self.controls_panels:
+
+            blit_on_screen(surf, (x, y))
+            y += -12
 
         self.player.health_column.draw()
 
