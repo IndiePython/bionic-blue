@@ -12,12 +12,15 @@ from pygame.color import THECOLORS
 
 from pygame.display import update
 
+from pygame.mixer import music
+
 
 ### local imports
 
 from ...config import (
     REFS,
     LEVELS_DIR,
+    MUSIC_DIR,
     BACK_PROPS, BACK_PROPS_ON_SCREEN,
     MIDDLE_PROPS, MIDDLE_PROPS_ON_SCREEN,
     BLOCKS, BLOCKS_ON_SCREEN,
@@ -80,6 +83,10 @@ class LevelManager:
 
     def prepare(self):
 
+        music.set_volume(.3)
+        music.load(str(MUSIC_DIR / 'level_1_by_juhani_junkala.ogg'))
+        music.play(-1)
+
         if not hasattr(self, 'player'):
             self.player = Player()
 
@@ -109,6 +116,7 @@ class LevelManager:
 
             for obj_data in objs_data:
                 layer.add(instantiate(obj_data))
+
 
     def control_player(self):
         self.player.control()

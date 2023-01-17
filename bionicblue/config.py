@@ -82,6 +82,7 @@ FONTS_DIR = DATA_DIR / 'fonts'
 IMAGES_DIR = DATA_DIR / 'images'
 ANIMATIONS_DIR = DATA_DIR / 'animations'
 SOUNDS_DIR = DATA_DIR / 'sounds'
+MUSIC_DIR = DATA_DIR / 'music'
 LEVELS_DIR = DATA_DIR / 'levels'
 PARTICLES_DIR = DATA_DIR / 'particles'
 
