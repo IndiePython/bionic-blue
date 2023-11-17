@@ -1,8 +1,6 @@
 
 ### third-party imports
 
-from pygame import quit as quit_pygame
-
 from pygame.locals import (
 
     QUIT,
@@ -29,6 +27,7 @@ from ....config import (
     MAX_X_SPEED,
     SHOOTING_STANCE_MSECS,
     DAMAGE_REBOUND_MSECS,
+    quit_game,
 )
 
 from .projectiles.default import DefaultProjectile
@@ -45,14 +44,12 @@ class WalkLeft:
         for event in get_events():
 
             if event.type == QUIT:
-                quit_pygame()
-                quit()
+                quit_game()
 
             elif event.type == KEYDOWN:
 
                 if event.key == K_ESCAPE:
-                    quit_pygame()
-                    quit()
+                    quit_game()
 
                 elif event.key == K_j:
                     self.walk_left_shoot()

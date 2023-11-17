@@ -7,6 +7,10 @@ from types import SimpleNamespace
 from pathlib import Path
 
 
+### third-party import
+from pygame import quit as quit_pygame
+
+
 ###
 COLORKEY = (192, 192, 192)
 
@@ -94,3 +98,10 @@ ALPHA_IMAGES_DIR = IMAGES_DIR  / 'alpha'
 SURF_MAP = {}
 ANIM_DATA_MAP = {}
 SOUND_MAP = {}
+
+###
+
+def quit_game():
+
+    quit_pygame()
+    quit()

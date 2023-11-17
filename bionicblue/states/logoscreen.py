@@ -5,8 +5,6 @@ from itertools import repeat, chain
 
 ### third-party imports
 
-from pygame import quit as quit_pygame
-
 from pygame.locals import QUIT
 
 from pygame.event import get as get_events
@@ -18,17 +16,15 @@ from pygame.display import update
 
 ### local imports
 
-from ..config import REFS, SURF_MAP
+from ..config import REFS, SURF_MAP, quit_game
 
 from ..pygameconstants import WHITE_BG, blit_on_screen
 
 from ..textman import render_text
 
+from ..exceptions import SwitchStateException
 
 class LogoScreen:
-
-    def __init__(self):
-        self.next_state = self
 
     def prepare(self):
 
@@ -43,9 +39,7 @@ class LogoScreen:
         for event in get_events():
 
             if event.type == QUIT:
-
-                quit_pygame()
-                quit()
+                quit_game()
 
     def update(self):
         pass
@@ -56,11 +50,10 @@ class LogoScreen:
             blit_on_screen(self.get_next_surf(), (102, 30))
 
         except StopIteration:
+
             game_state = REFS.get_game_state()
             game_state.prepare()
-            self.next_state = game_state
+
+            raise SwitchStateException(game_state)
 
         update()
-
-    def next(self):
-        return self.next_state

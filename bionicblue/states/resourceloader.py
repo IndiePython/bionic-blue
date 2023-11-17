@@ -5,7 +5,7 @@ from itertools import repeat, chain
 
 ### third-party imports
 
-from pygame import quit as quit_pygame, Surface
+from pygame import Surface
 
 from pygame.locals import QUIT
 
@@ -34,6 +34,7 @@ from ..config import (
     NO_ALPHA_IMAGES_DIR,
     ANIMATIONS_DIR,
     SOUNDS_DIR,
+    quit_game,
 )
 
 from ..pygameconstants import MSECS_PER_FRAME, WHITE_BG, blit_on_screen
@@ -41,6 +42,8 @@ from ..pygameconstants import MSECS_PER_FRAME, WHITE_BG, blit_on_screen
 from ..textman import render_text
 
 from ..ani2d.processing import process_animation_data
+
+from ..exceptions import SwitchStateException
 
 
 ALLOWED_SOUND_FILE_EXTENSIONS = frozenset(('.ogg', '.wav'))
@@ -86,16 +89,13 @@ class ResourceLoader:
 
         )
 
-        self.next_state = self
 
     def control(self):
 
         for event in get_events():
 
             if event.type == QUIT:
-
-                quit_pygame()
-                quit()
+                quit_game()
 
     def update(self):
 
@@ -118,15 +118,14 @@ class ResourceLoader:
                     break
 
         except StopIteration:
+
             logo_screen = REFS.states.logo_screen
             logo_screen.prepare()
-            self.next_state = logo_screen
+
+            raise SwitchStateException(logo_screen)
 
     def draw(self):
         update()
-
-    def next(self):
-        return self.next_state
 
 
 ### utility functions

@@ -1,8 +1,6 @@
 
 ### third-party imports
 
-from pygame import quit as quit_pygame
-
 from pygame.locals import (
 
     QUIT,
@@ -26,6 +24,7 @@ from ....config import (
     REFS,
     PROJECTILES,
     DAMAGE_REBOUND_MSECS,
+    quit_game,
 )
 
 from .projectiles.default import DefaultProjectile
@@ -42,14 +41,12 @@ class DecelerateRight:
         for event in get_events():
 
             if event.type == QUIT:
-                quit_pygame()
-                quit()
+                quit_game()
 
             elif event.type == KEYDOWN:
 
                 if event.key == K_ESCAPE:
-                    quit_pygame()
-                    quit()
+                    quit_game()
 
                 elif event.key == K_j:
                     self.decelerate_right_shoot()

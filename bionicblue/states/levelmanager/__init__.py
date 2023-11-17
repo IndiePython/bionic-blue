@@ -6,8 +6,6 @@ from pygame import (
     Surface,
 )
 
-from pygame.locals import QUIT
-
 from pygame.color import THECOLORS
 
 from pygame.display import update

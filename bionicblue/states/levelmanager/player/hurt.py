@@ -1,8 +1,6 @@
 
 ### third-party imports
 
-from pygame import quit as quit_pygame
-
 from pygame.locals import (
 
     QUIT,
@@ -23,6 +21,7 @@ from ....config import (
     REFS,
     DAMAGE_STANCE_MSECS,
     DAMAGE_REBOUND_MSECS,
+    quit_game,
 )
 
 
@@ -35,14 +34,10 @@ class Hurt:
         for event in get_events():
 
             if event.type == QUIT:
-                quit_pygame()
-                quit()
+                quit_game()
 
-            elif event.type == KEYDOWN:
-
-                if event.key == K_ESCAPE:
-                    quit_pygame()
-                    quit()
+            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                quit_game()
 
             elif event.type == KEYUP:
 

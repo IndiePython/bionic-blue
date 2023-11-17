@@ -7,6 +7,7 @@ visit its website: https://bionicblue.indiepython.com
 ### third-party import
 from pygame.time import get_ticks as get_msecs
 
+
 ### local imports
 
 from .config import REFS
@@ -14,6 +15,8 @@ from .config import REFS
 from .pygameconstants import FPS, maintain_fps
 
 from .states import setup_states
+
+from .exceptions import SwitchStateException
 
 
 def run_game():
@@ -23,18 +26,26 @@ def run_game():
 
     state = REFS.states.resource_loader
 
+    running = True
+
     while True:
 
-        maintain_fps(FPS)
+        try:
 
-        REFS.msecs = get_msecs()
+            ### game loop
 
-        state.control()
-        state.update()
-        state.draw()
+            while True:
 
-        state = state.next()
+                maintain_fps(FPS)
 
+                REFS.msecs = get_msecs()
+
+                state.control()
+                state.update()
+                state.draw()
+
+        except SwitchStateException as obj:
+            state = obj.state
 
 if __name__ == '__main__':
     run_game()

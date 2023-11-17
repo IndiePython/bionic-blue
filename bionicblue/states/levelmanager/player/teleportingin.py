@@ -1,8 +1,6 @@
 
 ### third-party imports
 
-from pygame import quit as quit_pygame
-
 from pygame.locals import (
 
     QUIT,
@@ -16,7 +14,7 @@ from pygame.event import get as get_events
 
 
 ### local import
-from ....config import REFS, SOUND_MAP
+from ....config import REFS, SOUND_MAP, quit_game
 
 
 
@@ -27,14 +25,12 @@ class TeleportingIn:
         for event in get_events():
 
             if event.type == QUIT:
-                quit_pygame()
-                quit()
+                quit_game()
 
             elif event.type == KEYDOWN:
 
                 if event.key == K_ESCAPE:
-                    quit_pygame()
-                    quit()
+                    quit_game()
 
     def teleporting_in_update(self):
 
