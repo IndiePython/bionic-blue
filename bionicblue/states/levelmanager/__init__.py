@@ -102,7 +102,7 @@ class LevelManager:
 
     def prepare(self):
 
-        music.set_volume(.3)
+        music.set_volume(.1)
         music.load(str(MUSIC_DIR / 'level_1_by_juhani_junkala.ogg'))
         music.play(-1)
 

@@ -147,5 +147,5 @@ def load_anim_from_dir(dirpath):
 
 def load_sound_from_filepath(filepath):
     sound = Sound(str(filepath))
-    sound.set_volume(.6)
+    sound.set_volume(.2)
     return sound
