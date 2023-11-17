@@ -10,11 +10,12 @@ from pygame.locals import (
 
 )
 
-from pygame.event import get as get_events
 
+### local imports
 
-### local import
 from ....config import REFS, SOUND_MAP, quit_game
+
+from ....pygamesetup import SERVICES_NS
 
 
 
@@ -22,7 +23,7 @@ class TeleportingIn:
 
     def teleporting_in_control(self):
 
-        for event in get_events():
+        for event in SERVICES_NS.get_events():
 
             if event.type == QUIT:
                 quit_game()

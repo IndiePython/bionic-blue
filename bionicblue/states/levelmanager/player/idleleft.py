@@ -13,10 +13,6 @@ from pygame.locals import (
 
 )
 
-from pygame.event import get as get_events
-
-from pygame.key import get_pressed as get_pressed_state
-
 
 ### local imports
 
@@ -27,6 +23,8 @@ from ....config import (
     DAMAGE_REBOUND_MSECS,
     quit_game,
 )
+
+from ....pygamesetup import SERVICES_NS
 
 from .projectiles.default import DefaultProjectile
 from .projectiles.chargedshot import ChargedShot
@@ -42,8 +40,8 @@ class IdleLeft:
         ### why we store the events so we can iterate over
         ### them next
 
-        events = get_events()
-        pressed_state = get_pressed_state()
+        events = SERVICES_NS.get_events()
+        pressed_state = SERVICES_NS.get_pressed_keys()
 
         ### iterate over events
 
@@ -81,8 +79,6 @@ class IdleLeft:
                         self.idle_left_release_charge(result)
 
         ###
-
-        pressed_state = get_pressed_state()
 
         if self.ladder:
 

@@ -7,7 +7,7 @@ from pygame import Surface
 
 from ....config import SURF_MAP
 
-from ....pygameconstants import blit_on_screen
+from ....pygamesetup.constants import blit_on_screen
 
 from ....surfsman import get_seamless_surf
 

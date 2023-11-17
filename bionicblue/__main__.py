@@ -12,11 +12,11 @@ from pygame.time import get_ticks as get_msecs
 
 from .config import REFS
 
-from .pygameconstants import FPS, maintain_fps
+from .pygamesetup import SERVICES_NS, switch_mode
 
 from .states import setup_states
 
-from .exceptions import SwitchStateException
+from .exceptions import SwitchStateException, SwitchModeException
 
 
 def run_game():
@@ -36,7 +36,7 @@ def run_game():
 
             while True:
 
-                maintain_fps(FPS)
+                SERVICES_NS.frame_checkups()
 
                 REFS.msecs = get_msecs()
 
@@ -46,6 +46,9 @@ def run_game():
 
         except SwitchStateException as obj:
             state = obj.state
+
+        except SwitchModeException as obj:
+            switch_mode(obj)
 
 if __name__ == '__main__':
     run_game()

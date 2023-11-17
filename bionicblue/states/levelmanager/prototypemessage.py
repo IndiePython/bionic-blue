@@ -5,9 +5,10 @@ from pygame import Surface
 
 from pygame.draw import rect as draw_rect
 
+
 ### local imports
 
-from ...pygameconstants import blit_on_screen
+from ...pygamesetup.constants import blit_on_screen
 
 from ...textman import render_text
 

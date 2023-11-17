@@ -17,7 +17,7 @@ from pygame.math import Vector2
 
 from ..config import ANIM_DATA_MAP
 
-from ..pygameconstants import blit_on_screen
+from ..pygamesetup.constants import blit_on_screen
 
 
 

@@ -9,15 +9,11 @@ from pygame import Surface
 
 from pygame.locals import QUIT
 
-from pygame.event import get as get_events
-
 from pygame.time import get_ticks as get_msecs
 
 from pygame.display import update
 
 from pygame.image import load as load_image
-
-from pygame.time import get_ticks as get_msecs
 
 from pygame.mixer import Sound
 
@@ -37,7 +33,9 @@ from ..config import (
     quit_game,
 )
 
-from ..pygameconstants import MSECS_PER_FRAME, WHITE_BG, blit_on_screen
+from ..pygamesetup import SERVICES_NS
+
+from ..pygamesetup.constants import MSECS_PER_FRAME, WHITE_BG, blit_on_screen
 
 from ..textman import render_text
 
@@ -92,7 +90,7 @@ class ResourceLoader:
 
     def control(self):
 
-        for event in get_events():
+        for event in SERVICES_NS.get_events():
 
             if event.type == QUIT:
                 quit_game()

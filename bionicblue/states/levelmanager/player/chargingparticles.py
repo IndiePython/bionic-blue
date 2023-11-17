@@ -16,7 +16,7 @@ from pygame.math import Vector2
 
 from ....config import PARTICLES_DIR, COLORKEY
 
-from ....pygameconstants import blit_on_screen
+from ....pygamesetup.constants import blit_on_screen
 
 from ....ourstdlibs.pyl import load_pyl
 

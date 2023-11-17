@@ -17,7 +17,7 @@ from ....config import (
     FULL_CHARGE_MSECS,
 )
 
-from ....pygameconstants import SCREEN_RECT, blit_on_screen, SCREEN
+from ....pygamesetup.constants import SCREEN_RECT, blit_on_screen, SCREEN
 
 from ....ourstdlibs.behaviour import do_nothing
 

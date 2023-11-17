@@ -10,7 +10,7 @@ from pygame.draw import rect as draw_rect, circle as draw_circle
 
 from ....config import SURF_MAP
 
-from ....pygameconstants import blit_on_screen
+from ....pygamesetup.constants import blit_on_screen
 
 
 

@@ -7,10 +7,6 @@ from itertools import repeat, chain
 
 from pygame.locals import QUIT
 
-from pygame.event import get as get_events
-
-from pygame.time import get_ticks as get_msecs
-
 from pygame.display import update
 
 
@@ -18,11 +14,13 @@ from pygame.display import update
 
 from ..config import REFS, SURF_MAP, quit_game
 
-from ..pygameconstants import WHITE_BG, blit_on_screen
+from ..pygamesetup import SERVICES_NS
 
-from ..textman import render_text
+from ..pygamesetup.constants import WHITE_BG, blit_on_screen
 
 from ..exceptions import SwitchStateException
+
+
 
 class LogoScreen:
 
@@ -36,7 +34,7 @@ class LogoScreen:
 
     def control(self):
 
-        for event in get_events():
+        for event in SERVICES_NS.get_events():
 
             if event.type == QUIT:
                 quit_game()

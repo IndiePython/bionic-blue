@@ -7,3 +7,12 @@ class SwitchStateException(Exception):
 
         self.state = new_state
         super().__init__("Must switch to new given state.")
+
+
+class SwitchModeException(Exception):
+    """Raised to switch between normal/play/record mode."""
+
+    def __init__(self, mode_name):
+
+        self.mode_name = mode_name
+        super().__init__("Must switch to new mode.")

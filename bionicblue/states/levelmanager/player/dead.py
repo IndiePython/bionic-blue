@@ -15,14 +15,17 @@ from pygame.time import get_ticks as get_msecs
 
 
 ### local imports
+
 from ....config import DAMAGE_STANCE_MSECS, quit_game
+
+from ....pygamesetup import SERVICES_NS
 
 
 class Dead:
 
     def dead_control(self):
 
-        for event in get_events():
+        for event in SERVICES_NS.get_events():
 
             if event.type == QUIT:
                 quit_game()

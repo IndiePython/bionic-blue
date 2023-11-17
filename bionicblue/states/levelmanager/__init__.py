@@ -28,7 +28,7 @@ from ...config import (
     execute_tasks
 )
 
-from ...pygameconstants import (
+from ...pygamesetup.constants import (
     screen_colliderect, blit_on_screen, SCREEN_RECT, SCREEN
 )
 

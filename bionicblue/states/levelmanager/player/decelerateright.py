@@ -13,10 +13,6 @@ from pygame.locals import (
 
 )
 
-from pygame.event import get as get_events
-
-from pygame.key import get_pressed as get_pressed_state
-
 
 ### local imports
 
@@ -26,6 +22,8 @@ from ....config import (
     DAMAGE_REBOUND_MSECS,
     quit_game,
 )
+
+from ....pygamesetup import SERVICES_NS
 
 from .projectiles.default import DefaultProjectile
 from .projectiles.chargedshot import ChargedShot
@@ -38,7 +36,7 @@ class DecelerateRight:
 
         ###
 
-        for event in get_events():
+        for event in SERVICES_NS.get_events():
 
             if event.type == QUIT:
                 quit_game()
@@ -67,7 +65,7 @@ class DecelerateRight:
 
         ###
 
-        pressed_state = get_pressed_state()
+        pressed_state = SERVICES_NS.get_pressed_keys()
 
         if pressed_state[K_a]:
 

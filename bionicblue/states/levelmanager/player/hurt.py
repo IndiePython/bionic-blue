@@ -12,7 +12,6 @@ from pygame.locals import (
 
 )
 
-from pygame.event import get as get_events
 
 
 ### local import
@@ -24,6 +23,9 @@ from ....config import (
     quit_game,
 )
 
+from ....pygamesetup import SERVICES_NS
+
+
 
 class Hurt:
 
@@ -31,7 +33,7 @@ class Hurt:
 
         ###
 
-        for event in get_events():
+        for event in SERVICES_NS.get_events():
 
             if event.type == QUIT:
                 quit_game()

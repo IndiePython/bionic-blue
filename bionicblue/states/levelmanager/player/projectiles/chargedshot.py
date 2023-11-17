@@ -17,7 +17,7 @@ from .....config import (
     append_task,
 )
 
-from .....pygameconstants import SCREEN_RECT, blit_on_screen
+from .....pygamesetup.constants import SCREEN_RECT, blit_on_screen
 
 from .....ani2d.player import AnimationPlayer2D
 
