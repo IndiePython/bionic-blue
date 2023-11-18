@@ -14,16 +14,18 @@ from pygame.locals import (
 
 
 
-### local import
+### local imports
 
-from ....config import (
-    REFS,
-    DAMAGE_STANCE_MSECS,
-    DAMAGE_REBOUND_MSECS,
-    quit_game,
+from ....config import quit_game
+
+from ....constants import (
+    DAMAGE_STANCE_FRAMES,
+    DAMAGE_REBOUND_FRAMES,
 )
 
 from ....pygamesetup import SERVICES_NS
+
+from ....pygamesetup.constants import GENERAL_NS
 
 
 
@@ -52,9 +54,9 @@ class Hurt:
 
         self.rect.x += self.x_speed
 
-        msecs = REFS.msecs
+        current_frame = GENERAL_NS.frame_index
 
-        if msecs - self.last_damage >= DAMAGE_STANCE_MSECS:
+        if current_frame - self.last_damage >= DAMAGE_STANCE_FRAMES:
 
             self.x_speed = 0
 
@@ -92,5 +94,5 @@ class Hurt:
 
             self.react_to_gravity()
 
-        if msecs - self.last_damage > DAMAGE_REBOUND_MSECS:
+        if current_frame - self.last_damage > DAMAGE_REBOUND_FRAMES:
             self.check_invisibility()

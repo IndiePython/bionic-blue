@@ -4,10 +4,6 @@ Bionic Blue (by Kennedy Guerra): to know more about this game,
 visit its website: https://bionicblue.indiepython.com
 """
 
-### third-party import
-from pygame.time import get_ticks as get_msecs
-
-
 ### local imports
 
 from .config import REFS
@@ -37,8 +33,6 @@ def run_game():
             while True:
 
                 SERVICES_NS.frame_checkups()
-
-                REFS.msecs = get_msecs()
 
                 state.control()
                 state.update()

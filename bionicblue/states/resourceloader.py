@@ -35,7 +35,7 @@ from ..config import (
 
 from ..pygamesetup import SERVICES_NS
 
-from ..pygamesetup.constants import MSECS_PER_FRAME, WHITE_BG, blit_on_screen
+from ..pygamesetup.constants import FPS, WHITE_BG, blit_on_screen
 
 from ..textman import render_text
 
@@ -44,7 +44,11 @@ from ..ani2d.processing import process_animation_data
 from ..exceptions import SwitchStateException
 
 
+
 ALLOWED_SOUND_FILE_EXTENSIONS = frozenset(('.ogg', '.wav'))
+
+MSECS_PER_FRAME = 1000 / FPS
+
 
 
 ### gather animation resources

@@ -8,16 +8,24 @@ from itertools import chain
 from ....config import (
     REFS,
     SOUND_MAP,
-    GRAVITY_ACCEL,
-    MAX_Y_SPEED,
     MIDDLE_PROPS_ON_SCREEN,
     BLOCKS_ON_SCREEN,
-    DAMAGE_REBOUND_MSECS,
-    MIDDLE_CHARGE_MSECS,
-    FULL_CHARGE_MSECS,
 )
 
-from ....pygamesetup.constants import SCREEN_RECT, blit_on_screen, SCREEN
+from ....constants import (
+    GRAVITY_ACCEL,
+    MAX_Y_SPEED,
+    DAMAGE_REBOUND_FRAMES,
+    MIDDLE_CHARGE_FRAMES,
+    FULL_CHARGE_FRAMES,
+)
+
+from ....pygamesetup.constants import (
+    GENERAL_NS,
+    SCREEN_RECT,
+    SCREEN,
+    blit_on_screen,
+)
 
 from ....ourstdlibs.behaviour import do_nothing
 
@@ -44,9 +52,9 @@ from .decelerateleft import DecelerateLeft
 from .hurt import Hurt
 from .dead import Dead
 
-## functions
-
+## function
 from .chargingparticles import draw_charging_particles
+
 
 
 class Player(
@@ -236,9 +244,9 @@ class Player(
 
         if self.state_name == 'dead': return
 
-        now = REFS.msecs
+        now = GENERAL_NS.frame_index
 
-        if now - self.last_damage <= DAMAGE_REBOUND_MSECS:
+        if now - self.last_damage <= DAMAGE_REBOUND_FRAMES:
             return
 
         self.health_column.damage(amount)
@@ -338,9 +346,9 @@ class Player(
 
     def check_charge(self):
 
-        diff = REFS.msecs - self.charge_start
+        diff = GENERAL_NS.frame_index - self.charge_start
 
-        if diff >= FULL_CHARGE_MSECS:
+        if diff >= FULL_CHARGE_FRAMES:
 
             if self.draw_charging_fx != do_nothing:
 
@@ -353,7 +361,7 @@ class Player(
                 self.draw_charging_fx = do_nothing
                 SOUND_MAP['blue_shooter_man_full_charge.wav'].play(-1)
 
-        elif diff >= MIDDLE_CHARGE_MSECS:
+        elif diff >= MIDDLE_CHARGE_FRAMES:
 
             if self.draw_charging_fx != draw_charging_particles:
 
@@ -371,9 +379,7 @@ class Player(
 
     def stop_charging(self):
 
-        msecs = REFS.msecs
-
-        diff = msecs - self.charge_start
+        diff = GENERAL_NS.frame_index - self.charge_start
 
         if 'invisible' in self.aniplayer.cycle_values:
 
@@ -389,10 +395,10 @@ class Player(
         SOUND_MAP['blue_shooter_man_middle_charge.wav'].stop()
         self.draw_charging_fx = do_nothing
 
-        if diff >= FULL_CHARGE_MSECS:
+        if diff >= FULL_CHARGE_FRAMES:
             return 'full'
 
-        elif diff >= MIDDLE_CHARGE_MSECS:
+        elif diff >= MIDDLE_CHARGE_FRAMES:
             return 'middle'
 
     def die(self):

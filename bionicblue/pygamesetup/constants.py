@@ -84,8 +84,6 @@ screen_colliderect = SCREEN_RECT.colliderect
 
 FPS = 30
 
-MSECS_PER_FRAME = 1000 / FPS
-
 _CLOCK = Clock()
 
 maintain_fps = _CLOCK.tick

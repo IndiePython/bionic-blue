@@ -16,16 +16,17 @@ from pygame.locals import (
 
 ### local imports
 
-from ....config import (
-    REFS,
-    PROJECTILES,
+from ....config import PROJECTILES, quit_game
+
+from ....constants import (
     MAX_X_SPEED,
-    SHOOTING_STANCE_MSECS,
-    DAMAGE_REBOUND_MSECS,
-    quit_game,
+    SHOOTING_STANCE_FRAMES,
+    DAMAGE_REBOUND_FRAMES,
 )
 
 from ....pygamesetup import SERVICES_NS
+
+from ....pygamesetup.constants import GENERAL_NS
 
 from .projectiles.default import DefaultProjectile
 from .projectiles.chargedshot import ChargedShot
@@ -113,9 +114,9 @@ class WalkRight:
             self.set_state('idle_right')
             self.aniplayer.switch_animation('idle_right')
 
-        msecs = REFS.msecs
+        current_frame = GENERAL_NS.frame_index
 
-        if msecs - self.last_shot >= SHOOTING_STANCE_MSECS:
+        if current_frame - self.last_shot >= SHOOTING_STANCE_FRAMES:
             self.aniplayer.blend('-shooting')
 
         if self.charge_start:
@@ -126,7 +127,7 @@ class WalkRight:
 
         self.react_to_gravity()
 
-        if msecs - self.last_damage > DAMAGE_REBOUND_MSECS:
+        if current_frame - self.last_damage > DAMAGE_REBOUND_FRAMES:
             self.check_invisibility()
 
     def walk_right_shoot(self):
@@ -142,7 +143,7 @@ class WalkRight:
         )
 
         self.aniplayer.blend('+shooting')
-        self.charge_start = self.last_shot = REFS.msecs
+        self.charge_start = self.last_shot = GENERAL_NS.frame_index
 
     def walk_right_release_charge(self, charge_type):
 
@@ -159,4 +160,4 @@ class WalkRight:
 
         self.aniplayer.blend('+shooting')
 
-        self.last_shot = REFS.msecs
+        self.last_shot = GENERAL_NS.frame_index

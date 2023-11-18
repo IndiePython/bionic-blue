@@ -2,19 +2,21 @@
 from functools import partial
 
 
-### third-party import
-from pygame.time import get_ticks as get_msecs
-
-
 ### local imports
 
 from ....config import REFS, ACTORS, FRONT_PROPS, append_task
+
+from ....pygamesetup.constants import GENERAL_NS
+
+from ....constants import DAMAGE_WHITENING_FRAMES
 
 from ....ani2d.player import AnimationPlayer2D
 
 from ....ourstdlibs.behaviour import do_nothing
 
 from ..frontprops.defaultexplosion import DefaultExplosion
+
+
 
 
 class GruntBot:
@@ -33,7 +35,7 @@ class GruntBot:
             )
         )
 
-        self.last_damage = get_msecs()
+        self.last_damage = GENERAL_NS.frame_index
         self.routine_check = do_nothing
 
     def update(self):
@@ -45,7 +47,10 @@ class GruntBot:
 
     def check_damage_whitening(self):
 
-        if get_msecs() - self.last_damage > 70:
+        if (
+            GENERAL_NS.frame_index - self.last_damage
+            > DAMAGE_WHITENING_FRAMES
+        ):
 
             self.aniplayer.restore_surface_cycling()
             self.routine_check = do_nothing

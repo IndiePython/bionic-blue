@@ -17,14 +17,18 @@ from pygame.locals import (
 ### local imports
 
 from ....config import (
-    REFS,
     PROJECTILES,
-    SHOOTING_STANCE_MSECS,
-    DAMAGE_REBOUND_MSECS,
     quit_game,
 )
 
+from ....constants import (
+    SHOOTING_STANCE_FRAMES,
+    DAMAGE_REBOUND_FRAMES,
+)
+
 from ....pygamesetup import SERVICES_NS
+
+from ....pygamesetup.constants import GENERAL_NS
 
 from .projectiles.default import DefaultProjectile
 from .projectiles.chargedshot import ChargedShot
@@ -84,7 +88,7 @@ class IdleLeft:
 
             ap = self.aniplayer
 
-            if REFS.msecs - self.last_shot < SHOOTING_STANCE_MSECS:
+            if GENERAL_NS.frame_index - self.last_shot < SHOOTING_STANCE_FRAMES:
                 dy = 0
 
             elif pressed_state[K_w]:
@@ -142,9 +146,9 @@ class IdleLeft:
 
     def idle_left_update(self):
 
-        msecs = REFS.msecs
+        current_frame = GENERAL_NS.frame_index
 
-        if msecs - self.last_shot >= SHOOTING_STANCE_MSECS:
+        if current_frame - self.last_shot >= SHOOTING_STANCE_FRAMES:
             self.aniplayer.blend('-shooting')
 
         if self.charge_start:
@@ -153,7 +157,7 @@ class IdleLeft:
         if not self.ladder:
             self.react_to_gravity()
 
-        if msecs - self.last_damage > DAMAGE_REBOUND_MSECS:
+        if current_frame - self.last_damage > DAMAGE_REBOUND_FRAMES:
             self.check_invisibility()
 
     def idle_left_shoot(self):
@@ -173,7 +177,7 @@ class IdleLeft:
         else:
             self.aniplayer.blend('+shooting')
 
-        self.charge_start = self.last_shot = REFS.msecs
+        self.charge_start = self.last_shot = GENERAL_NS.frame_index
 
     def idle_left_release_charge(self, charge_type):
 
@@ -193,4 +197,4 @@ class IdleLeft:
         else:
             self.aniplayer.blend('+shooting')
 
-        self.last_shot = REFS.msecs
+        self.last_shot = GENERAL_NS.frame_index

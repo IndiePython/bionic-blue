@@ -16,14 +16,13 @@ from pygame.locals import (
 
 ### local imports
 
-from ....config import (
-    REFS,
-    PROJECTILES,
-    DAMAGE_REBOUND_MSECS,
-    quit_game,
-)
+from ....config import PROJECTILES, quit_game
+
+from ....constants import DAMAGE_REBOUND_FRAMES
 
 from ....pygamesetup import SERVICES_NS
+
+from ....pygamesetup.constants import GENERAL_NS
 
 from .projectiles.default import DefaultProjectile
 from .projectiles.chargedshot import ChargedShot
@@ -99,7 +98,7 @@ class DecelerateRight:
         elif self.x_speed < 0:
             self.x_speed += 1
 
-        msecs = REFS.msecs
+        current_frame = GENERAL_NS.frame_index
 
         if self.charge_start:
             self.check_charge()
@@ -109,7 +108,7 @@ class DecelerateRight:
 
         self.react_to_gravity()
 
-        if msecs - self.last_damage > DAMAGE_REBOUND_MSECS:
+        if current_frame - self.last_damage > DAMAGE_REBOUND_FRAMES:
             self.check_invisibility()
 
     def decelerate_right_shoot(self):
@@ -125,7 +124,7 @@ class DecelerateRight:
         )
 
         self.aniplayer.blend('+shooting')
-        self.charge_start = REFS.msecs
+        self.charge_start = GENERAL_NS.frame_index
 
     def decelerate_right_release_charge(self, charge_type):
 
@@ -142,4 +141,4 @@ class DecelerateRight:
 
         self.aniplayer.blend('+shooting')
 
-        self.last_shot = REFS.msecs
+        self.last_shot = GENERAL_NS.frame_index

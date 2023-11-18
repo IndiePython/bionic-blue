@@ -9,14 +9,10 @@ from pygame.locals import (
     K_ESCAPE,
 )
 
-from pygame.event import get as get_events
-
-from pygame.time import get_ticks as get_msecs
-
 
 ### local imports
 
-from ....config import DAMAGE_STANCE_MSECS, quit_game
+from ....config import quit_game
 
 from ....pygamesetup import SERVICES_NS
 
