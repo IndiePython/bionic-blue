@@ -63,20 +63,20 @@ class LevelManager:
 
     def __init__(self):
 
-        self.controls_panels = [
-
-            render_text(f' {text} ', 'regular', 12)
-
-            for text in (
-                'a,d : left/right',
-                'j,k : shoot/jump',
-                'w,s : up/down ladder',
-                'ESC : quit',
-            )
-
-        ]
-
-        self.controls_panels.reverse()
+#        self.controls_panels = [
+#
+#            render_text(f' {text} ', 'regular', 12)
+#
+#            for text in (
+#                'a,d : left/right',
+#                'j,k : shoot/jump',
+#                'w,s : up/down ladder',
+#                'ESC : quit',
+#            )
+#
+#        ]
+#
+#        self.controls_panels.reverse()
 
         self.control = self.control_player
 
@@ -295,13 +295,13 @@ class LevelManager:
 #        )
         ############################
 
-        x = 1
-        y = 180 - 18
-
-        for surf in self.controls_panels:
-
-            blit_on_screen(surf, (x, y))
-            y += -12
+#        x = 1
+#        y = 180 - 18
+#
+#        for surf in self.controls_panels:
+#
+#            blit_on_screen(surf, (x, y))
+#            y += -12
 
         self.player.health_column.draw()
 

@@ -1,6 +1,8 @@
 
 ### standard library imports
 
+from pathlib import Path
+
 from collections import defaultdict
 
 from datetime import datetime
@@ -42,8 +44,6 @@ from pygame.display import update
 
 ### local imports
 
-#from ...ourstdlibs.path import get_timestamp
-
 from ...ourstdlibs.pyl import save_pyl
 
 from ...exceptions import SwitchModeException
@@ -58,6 +58,7 @@ from ..constants import (
     GENERAL_NS,
     GENERAL_SERVICE_NAMES,
     FPS, maintain_fps,
+    SIZE,
 
     CancelWhenPaused, pause,
 
@@ -157,10 +158,13 @@ NAMES_OF_EVENTS_TO_KEEP = frozenset((
     'TEXTINPUT',
 ))
 
+### timestamp format string
+TIMESTAMP_FORMAT_STRING = 'Y%YM%mD%d_H%HM%MS%S'
+
 
 ###
 
-def set_behaviour(services_namespace, data):
+def set_behaviour(services_namespace):
     """Setup record services and data."""
 
     ### set record services as current ones.
@@ -172,15 +176,20 @@ def set_behaviour(services_namespace, data):
         value = our_globals[attr_name]
         setattr(services_namespace, attr_name, value)
 
-    ### store recording path and recording size
+    ### store recording title, path and size
 
-    for name in (
-        'recording_title',
-        'recording_path',
-        'recording_size',
+    home = Path.home()
+
+    now = datetime.now().strftime(TIMESTAMP_FORMAT_STRING)
+    title = home.name + '_at_' + now
+
+    filepath = home / 'my_recording.pyl'
+
+    for name, value in (
+        ('recording_title', title),
+        ('recording_path', filepath),
+        ('recording_size', SIZE),
     ):
-
-        value = data[name]
         setattr(REC_REFS, name, value)
 
     ### create and store title label, then reposition
@@ -189,7 +198,7 @@ def set_behaviour(services_namespace, data):
     new_title_label = (
         UIObject2D.from_surface(
             render_text(
-                text = data['recording_title'],
+                text = REC_REFS.recording_title,
                 style = 'regular',
                 size = 12,
                 foreground_color = THECOLORS['white'],
@@ -437,7 +446,9 @@ def save_session_data():
         for attr_name in ('parent', 'stem')
     )
 
-    timestamp = get_timestamp(REC_REFS.session_start_datetime)
+    timestamp = (
+        REC_REFS.session_start_datetime.strftime(TIMESTAMP_FORMAT_STRING)
+    )
 
     final_path = parent / f"{stem}.{timestamp}.pyl"
     save_pyl(session_data, final_path, width=125, compact=True)

@@ -1,6 +1,8 @@
 
 ### standard library imports
 
+from pathlib import Path
+
 from collections import defaultdict
 
 from functools import reduce
@@ -57,6 +59,7 @@ from ..constants import (
     SCREEN, SCREEN_RECT, blit_on_screen,
     GENERAL_NS,
     GENERAL_SERVICE_NAMES,
+    FPS,
     maintain_fps,
 
     CancelWhenPaused, pause,
@@ -231,7 +234,7 @@ def get_ready_events(events):
 
 
 
-def set_behaviour(services_namespace, data):
+def set_behaviour(services_namespace):
     """Setup play services and data."""
 
     ### set play services as current ones
@@ -244,11 +247,21 @@ def set_behaviour(services_namespace, data):
         setattr(services_namespace, attr_name, value)
 
     ### load session data
-    SESSION_DATA.update(load_pyl(data['input_data_path']))
+
+    path = str(
+        next(
+            item
+            for item in Path.home().iterdir()
+            if item.name.endswith('.pyl')
+            if not item.name.startswith('.')
+        )
+    )
+
+    SESSION_DATA.update(load_pyl(path))
 
     ### retrieve playback speed and last frame index
 
-    playback_speed = data['playback_speed']
+    playback_speed = FPS
     last_frame_index = SESSION_DATA['last_frame_index']
 
     ### store playback speed, last frame index and recording width

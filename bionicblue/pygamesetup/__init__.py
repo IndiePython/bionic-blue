@@ -38,13 +38,13 @@ def switch_mode(mode_info_ns):
         has attributes containing data about mode to be
         switched to.
     """
-    mode = GENERAL_NS.mode_name = mode_info_ns.mode
+    mode = GENERAL_NS.mode_name = mode_info_ns.mode_name
 
     if mode == 'record':
-        record.set_behaviour(SERVICES_NS, mode_info_ns.data)
+        record.set_behaviour(SERVICES_NS)
 
     elif mode == 'play':
-        play.set_behaviour(SERVICES_NS, mode_info_ns.data)
+        play.set_behaviour(SERVICES_NS)
 
     elif mode == 'normal':
         normal.set_behaviour(SERVICES_NS)
