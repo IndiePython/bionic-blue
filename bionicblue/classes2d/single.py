@@ -4,8 +4,9 @@
 from pygame.math import Vector2
 
 
-### local import
-from ..config import REFS
+### local imports
+from ..pygamesetup.constants import SCREEN_RECT, blit_on_screen
+
 
 
 class UIObjectBase:
@@ -19,7 +20,7 @@ class UIObjectBase:
         instance and a rect attribute containing a
         pygame.Rect instance.
         """
-        REFS.blit_on_screen(self.image, self.rect)
+        blit_on_screen(self.image, self.rect)
 
     def draw_on_screen(self):
         """Works as self.draw, but check if obj is onscreen.
@@ -29,8 +30,8 @@ class UIObjectBase:
         instance and a rect attribute containing a
         pygame.Rect instance.
         """
-        if REFS.screen_rect.colliderect(self.rect):
-            REFS.blit_on_screen(self.image, self.rect)
+        if SCREEN_RECT.colliderect(self.rect):
+            blit_on_screen(self.image, self.rect)
 
     def draw_on_surf(self, surf):
         """Work as self.draw, but blit on specified surf.

@@ -69,6 +69,9 @@ SCREEN = set_mode(SIZE, SCALED)
 SCREEN.fill(THECOLORS['white'])
 WHITE_BG = SCREEN.copy()
 
+BLACK_BG = SCREEN.copy()
+BLACK_BG.fill('black')
+
 SCREEN_RECT = SCREEN.get_rect()
 
 

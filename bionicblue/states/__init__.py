@@ -7,17 +7,20 @@ from .resourceloader import ResourceLoader
 
 from .logoscreen import LogoScreen
 
+from .titlescreen import TitleScreen
+
 from .levelmanager import LevelManager
 
 from .hqmanager import HeadQuartersManager
 
-#from .menuscreen import MenuScreen
+#from .mainmenu import MainMenu
 #from .optionscreen import OptionsScreen
 #from .endscreen import EndScreen
 
 
 def setup_states():
     """Instantiate and store states."""
+
     states = REFS.states
 
     states.resource_loader = ResourceLoader()
@@ -27,7 +30,8 @@ def setup_states():
 
     REFS.get_game_state = get_game_state
 
-    #states.menu_screen = MenuScreen()
+    states.title_screen = TitleScreen()
+    #states.menu_screen = MainMenu()
     #states.options_screen = OptionsScreen()
 
 def get_game_state():

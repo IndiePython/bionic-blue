@@ -39,7 +39,10 @@ from ..pygamesetup.constants import FPS, WHITE_BG, blit_on_screen
 
 from ..textman import render_text
 
+from ..ani2d.player import AnimationPlayer2D
 from ..ani2d.processing import process_animation_data
+
+from ..classes2d.single import UIObject2D
 
 from ..exceptions import SwitchStateException
 
@@ -120,6 +123,10 @@ class ResourceLoader:
                     break
 
         except StopIteration:
+
+            REFS.blue_boy = blue_boy = UIObject2D()
+
+            blue_boy.ap = AnimationPlayer2D(blue_boy, 'blue_shooter_man', 'walk_right')
 
             logo_screen = REFS.states.logo_screen
             logo_screen.prepare()

@@ -10,7 +10,7 @@ from pygame.math import Vector2
 
 ### local imports
 
-from ..config import REFS
+from ..pygamesetup.constants import SCREEN_RECT, blit_on_screen
 
 from ..rectsman.main import (
     rect_property,
@@ -43,7 +43,7 @@ class UICollection2D:
 
         Objects on screen are those which collide with it.
         """
-        screen_colliderect = REFS.screen_rect.colliderect
+        screen_colliderect = SCREEN_RECT.colliderect
 
         return (obj for obj in self if screen_colliderect(obj.rect))
 
@@ -172,8 +172,6 @@ class UICollection2D:
         instance and a rect attribute containing a
         pygame.Rect instance.
         """
-        blit_on_screen = REFS.blit_on_screen
-
         for obj in self:
             blit_on_screen(obj.image, obj.rect)
 
@@ -185,8 +183,6 @@ class UICollection2D:
         instance and a rect attribute containing a
         pygame.Rect instance.
         """
-        blit_on_screen = REFS.blit_on_screen
-
         for obj in self.get_on_screen():
             blit_on_screen(obj.image, obj.rect)
 
@@ -209,8 +205,6 @@ class UICollection2D:
         rect
             Any instance of pygame.Rect.
         """
-        blit_on_screen = REFS.blit_on_screen
-
         for obj in self:
             if rect.contains(obj.rect):
                 blit_on_screen(obj.image, obj.rect)
@@ -220,8 +214,6 @@ class UICollection2D:
         rect
             Any instance of pygame.Rect
         """
-        blit_on_screen = REFS.blit_on_screen
-
         for obj in self:
             if rect.colliderect(obj.rect):
                 blit_on_screen(obj.image, obj.rect)

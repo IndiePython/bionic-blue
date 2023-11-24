@@ -26,11 +26,17 @@ class LogoScreen:
 
     def prepare(self):
 
-        self.get_next_surf = iter(range(0)).__next__
-#        self.get_next_surf = chain.from_iterable(
-#            chain(repeat(surf, 45), repeat(WHITE_BG, 1))
-#            for surf in SURF_MAP.values()
-#        ).__next__
+#        self.get_next_surf = iter(range(0)).__next__
+        self.get_next_surf = chain.from_iterable(
+
+            chain(repeat(SURF_MAP[key], 45), repeat(WHITE_BG, 1))
+            for key in (
+                'indiepython_logo.png',
+                'python_logo.png',
+                'pygame_logo.png',
+            )
+
+        ).__next__
 
     def control(self):
 
@@ -44,14 +50,15 @@ class LogoScreen:
 
     def draw(self):
 
+        blit_on_screen(WHITE_BG, (0, 0))
+
         try:
             blit_on_screen(self.get_next_surf(), (102, 30))
 
         except StopIteration:
 
-            game_state = REFS.get_game_state()
-            game_state.prepare()
-
-            raise SwitchStateException(game_state)
+            title_screen = REFS.states.title_screen
+            title_screen.prepare()
+            raise SwitchStateException(title_screen)
 
         update()
