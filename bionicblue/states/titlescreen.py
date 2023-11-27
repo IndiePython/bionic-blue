@@ -41,15 +41,7 @@ class TitleScreen:
 
         ###
 
-        self.bb_title = (
-            UIObject2D.from_surface(
-                render_text('Bionic Blue', 'regular', 38, 'dodgerblue')
-            )
-        )
-
-        ###
-
-        title_rect = self.title_rect = self.bb_title.rect
+        title_rect = self.title_rect = REFS.bb_title.rect
 
         title_rect.midtop = SCREEN_RECT.move(0, 10).midtop
 
@@ -110,14 +102,10 @@ class TitleScreen:
 
                 if self.update == self.update_draw_label_flag:
 
-                    #main_menu = REFS.states.main_menu
-                    #main_menu.prepare()
+                    main_menu = REFS.states.main_menu
+                    main_menu.prepare()
 
-                    #raise SwitchStateException(main_menu)
-                    game_state = REFS.get_game_state()
-                    game_state.prepare()
-
-                    raise SwitchStateException(game_state)
+                    raise SwitchStateException(main_menu)
 
     def update_title_position(self):
 
@@ -140,7 +128,7 @@ class TitleScreen:
 
         blit_on_screen(BLACK_BG, (0, 0))
 
-        self.bb_title.draw()
+        REFS.bb_title.draw()
 
         REFS.blue_boy.ap.draw()
 

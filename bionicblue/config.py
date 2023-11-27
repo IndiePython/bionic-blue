@@ -1,9 +1,6 @@
 """General configuration for game."""
 
-### standard library imports
-
-from types import SimpleNamespace
-
+### standard library import
 from pathlib import Path
 
 
@@ -11,14 +8,26 @@ from pathlib import Path
 from pygame import quit as quit_pygame
 
 
+### local import
+from .appinfo import APP_DIR_NAME
+
+
+
 ###
 COLORKEY = (192, 192, 192)
 
 ###
 
-REFS = SimpleNamespace(
+## anonymous object builder
+Object = type('Object', (), {})
 
-    states = SimpleNamespace(),
+##
+
+REFS = Object()
+
+REFS.__dict__.update(dict(
+
+    states = Object(),
 
     msecs = 0,
 
@@ -35,7 +44,7 @@ REFS = SimpleNamespace(
         lambda: REFS.states.level_manager.disable_player_tracking()
     ),
 
-)
+))
 
 ###
 
@@ -88,6 +97,19 @@ ALPHA_IMAGES_DIR = IMAGES_DIR  / 'alpha'
 SURF_MAP = {}
 ANIM_DATA_MAP = {}
 SOUND_MAP = {}
+
+###
+
+SAVE_SLOTS_DIR = Path.home() / '.local' / APP_DIR_NAME / 'save_slots'
+
+if not SAVE_SLOTS_DIR.exists():
+
+    try:
+        SAVE_SLOTS_DIR.mkdir(parents=True)
+
+    except Exception as err:
+        print("Couldn't create folder for save slots")
+
 
 ###
 

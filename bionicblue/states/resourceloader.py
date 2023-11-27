@@ -35,7 +35,7 @@ from ..config import (
 
 from ..pygamesetup import SERVICES_NS
 
-from ..pygamesetup.constants import FPS, WHITE_BG, blit_on_screen
+from ..pygamesetup.constants import FPS, WHITE_BG, SCREEN_RECT, blit_on_screen
 
 from ..textman import render_text
 
@@ -60,7 +60,7 @@ class ResourceLoader:
 
     def __init__(self):
 
-        self.loading_surf = render_text('loading...', 'regular', 12)
+        self.loading_surf = render_text('loading...', 'regular', 16)
 
         self.resources_to_process = chain(
 
@@ -124,9 +124,28 @@ class ResourceLoader:
 
         except StopIteration:
 
-            REFS.blue_boy = blue_boy = UIObject2D()
+            ### store animated objects
 
-            blue_boy.ap = AnimationPlayer2D(blue_boy, 'blue_shooter_man', 'walk_right')
+            for attr_name, anim_data_name, anim_name in (
+                ('blue_boy', 'blue_shooter_man', 'walk_right'),
+                ('middle_shot', 'middle_charged_shot', 'idle_right'),
+            ):
+
+                obj = UIObject2D()
+                setattr(REFS, attr_name, obj)
+                obj.ap = AnimationPlayer2D(obj, anim_data_name, anim_name)
+
+                obj.rect.right = SCREEN_RECT.left # place out of screen for now
+
+            ### create title label
+
+            REFS.bb_title = (
+                UIObject2D.from_surface(
+                    render_text('Bionic Blue', 'regular', 38, 'dodgerblue')
+                )
+            )
+
+            ### prepare logo screen
 
             logo_screen = REFS.states.logo_screen
             logo_screen.prepare()

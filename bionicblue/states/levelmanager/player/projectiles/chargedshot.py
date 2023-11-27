@@ -19,16 +19,16 @@ from .....config import (
 
 from .....pygamesetup.constants import SCREEN_RECT, blit_on_screen
 
+from .....constants import CHARGED_SHOT_SPEED
+
 from .....ani2d.player import AnimationPlayer2D
 
 
 class ChargedShot:
 
-    abs_speed = 10
-
     def __init__(self, charge_type, x_orientation, pos_name, pos_value):
 
-        self.x_speed = x_orientation * self.abs_speed
+        self.x_speed = x_orientation * CHARGED_SHOT_SPEED
 
         animation_data_key = (
             'full_charged_shot'

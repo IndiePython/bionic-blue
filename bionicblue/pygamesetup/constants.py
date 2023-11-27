@@ -18,6 +18,7 @@ from pygame.locals import (
     K_F7,
     K_F8,
 
+    FULLSCREEN,
     SCALED,
     KMOD_NONE,
 
@@ -40,7 +41,10 @@ from pygame.event import get
 
 
 ### local imports
+
 from ..config import DATA_DIR, quit_game
+
+from ..userprefsman.main import USER_PREFS
 
 
 
@@ -64,7 +68,11 @@ image_path = str(DATA_DIR / "app_icon.png")
 
 SIZE = (320, 180)
 
-SCREEN = set_mode(SIZE, SCALED)
+
+flag = SCALED | (FULLSCREEN if USER_PREFS['FULLSCREEN'] else 0)
+
+
+SCREEN = set_mode(SIZE, flag)
 
 SCREEN.fill(THECOLORS['white'])
 WHITE_BG = SCREEN.copy()
