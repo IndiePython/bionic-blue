@@ -1,3 +1,7 @@
 
+TITLE = "Bionic Blue"
 
-APP_DIR_NAME = 'bionic_blue'
+ABBREVIATED_TITLE = "BB"
+
+ORG_DIR_NAME = "IndiePython"
+APP_DIR_NAME = 'BionicBlue'

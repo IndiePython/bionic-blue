@@ -51,6 +51,8 @@ from pygame.event import (
 
 from ..config import DATA_DIR, quit_game
 
+from ..appinfo import TITLE, ABBREVIATED_TITLE
+
 from ..userprefsman.main import USER_PREFS
 
 
@@ -92,7 +94,7 @@ SCREEN_COPY = SCREEN.copy()
 SCREEN_RECT = SCREEN.get_rect()
 
 
-set_caption('Bionic Blue', 'BB')
+set_caption(TITLE, ABBREVIATED_TITLE)
 
 blit_on_screen = SCREEN.blit
 

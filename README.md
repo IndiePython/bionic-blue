@@ -12,7 +12,9 @@
 
 Bionic Blue is an action platformer game featuring a bionic boy tasked with protecting humanity against dangerous robots. It is currently at an early stage of development and for now works like a prototype to showcase actions/animations. This project is part of the [Indie Python](https://github.com/IndiePython) project and has a [dedicated website](https://bionicblue.indiepython.com) where you can find more info about it.
 
-It is made in [Python](https://github.com/python/cpython)/[pygame](https://github.com/pygame/pygame) targeting desktop platforms where Python is available like Windows, Mac and Linux.
+It is made in [Python](https://github.com/python/cpython)/[pygame-ce](https://github.com/pygame-community/pygame-ce) targeting desktop platforms where Python is available like Windows, Mac and Linux.
+
+This game was created by [Kennedy Richard S. Guerra](https://kennedyrichard.com) (me), who also develops/maintains the game.
 
 Check this youtube video where the game is briefly presented:
 
@@ -36,32 +38,50 @@ You can install bionic blue from the Python Package Index with the `pip` command
 pip install bionicblue
 ```
 
-This will install the `pygame` library as well if not already present. To run the installed game, all you need now is to run the `bionicblue` command.
+This will install the `pygame-ce` library (pygame community edition fork) as well if not already present. To run the installed game, all you need now is to run the `bionicblue` command.
 
 
 ### If you want to use as a standalone program
 
-Download the `bionicblue` folder in the top of the repository folder. Then, if you have `pygame` installed in your Python distribution, just execute the command below in the directory where you put the `bionicblue` folder:
+Download the `bionicblue` folder in the top of the repository folder. Then, if you have the `pygame-ce` library (pygame community edition fork) installed in the Python instance you'll use to run the game, you just need to execute the command below in the directory where you put the `bionicblue` folder:
 
 ```python
 python3 -m bionicblue
 ```
 
-Depending on your system, you might need to use the `python` command instead of the `python3` command above.
+Depending on your system, you might need to use the `python` command instead of the `python3` command above. That's all you should need.
+
+However, if the pygame installed in the Python instance used to run the game isn't pygame-ce the game won't launch. Instead, a dialog will appear explaining the problem and providing instructions to replace your pygame installation by the community edition fork. Both regular pygame and the community edition fork (pygame-ce) are great, but the game can only run with pygame-ce because it uses services that are available solely in that library.
+
+
+## Controls
+
+The controls are configurable both for keyboard and gamepad.
+
+Default controls for keyboard are...
+
+| Action | Key |
+| --- | --- |
+| Movement | w, a, s, d keys |
+| Shoot | j |
+| Jump | k |
+
+Enter (return) and escape keys are reserved for confirming and exitting/going back, respectively. Arrow keys are used to navigate menus, but can also be configured to be used for moving the character.
+
+Regarding the gamepad, the user doesn't need to configure directional buttons/triggers. Those are detected and managed automatically. The user only needs to configure the gamepad for actions like shooting, jumping, etc.
+
 
 
 ## Contributing
 
-Pull requests to refactor/optimize the existing code or to fix bugs are welcome. For major changes, please [start a discussion](https://github.com/IndiePython/bionic-blue/discussions) first to discuss what you would like to change.
+Keep in mind this is a game project, so it has a design and finite set of features defined by its creator (me, Kennedy Guerra) according to his vision. In other words, as much as we love contributions in general in the Indie Python project, for this game project we would like the contributions to be limited to refactoring/optimizing/fixing the existing code, rather than changing the design/content of the game.
 
-Keep in mind this is a project to design and develop a game, an interactive engaging experience/tale based on a definite subjective concept. Thus, the approach used in an open-ended application doesn't usually work. In such approach, new features are constantly being suggested/implemented as new possibilities arise. This would rather make the game stray from its concept. In other words, the features/improvements must exist within the game's concept.
-
-Furthermore, to achieve the concept, the game has a defined design and set of features. Though such design and set of features are developed iteratively and change over time, they still do so with the purpose of realizing the game's concept.
+If in doubt, please [start a discussion](https://github.com/IndiePython/bionic-blue/discussions) first, in order to discuss what you would like to change.
 
 
 ## Issues
 
-Issues are reserved for bugs or major inconveniences. Please, if you're not certain, [start a discussion](https://github.com/IndiePython/bionic-blue/discussions) instead. It can always be converted into an issue later if needed.
+Issues are reserved for things that crash the game or otherwise prevent the user from progressing in the game. Please, if you're not certain, [start a discussion](https://github.com/IndiePython/bionic-blue/discussions) instead. It can always be converted into an issue later if needed.
 
 ## Contact
 

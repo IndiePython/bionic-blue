@@ -6,6 +6,15 @@ visit its website: https://bionicblue.indiepython.com
 
 ### local imports
 
+## first ensure pygame used is the community edition fork (pygame-ce);
+##
+## this is important because the app uses services that are not available
+## in the regular pygame instance
+from .ensurepygamece import ensure_pygame_ce
+ensure_pygame_ce()
+
+## remaining local imports
+
 from .config import REFS
 
 from .pygamesetup import SERVICES_NS, switch_mode
