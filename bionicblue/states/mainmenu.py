@@ -80,11 +80,12 @@ class MainMenu:
 
             for key, label_title in (
                 ('continue', 'Continue'),
-                ('new_game', 'New Game'),
-                ('load_game', 'Load Game'),
-                ('kbd_controls', 'Keyboard Controls'),
-                ('gp_controls', 'Gamepad Controls'),
-                ('options', 'Options'),
+                ('new_game', 'New game (prototype)'),
+                ('load_game', 'Load game'),
+                ('kbd_controls', 'Keyboard controls'),
+                ('gp_controls', 'Gamepad controls'),
+                ('options', 'Options (not implemented yet)'),
+                ('exit', 'Exit game'),
             )
 
         ]
@@ -122,6 +123,7 @@ class MainMenu:
                     'kbd_controls',
                     'gp_controls',
                     'options',
+                    'exit',
                 )
 
             )
@@ -141,6 +143,7 @@ class MainMenu:
                     'kbd_controls',
                     'gp_controls',
                     'options',
+                    'exit',
                 )
 
             )
@@ -201,6 +204,9 @@ class MainMenu:
             controls_screen.prepare(item_key)
 
             raise SwitchStateException(controls_screen)
+
+        elif item_key == 'exit':
+            quit_game()
 
     def control_item_selection(self):
 
