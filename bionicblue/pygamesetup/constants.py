@@ -22,6 +22,11 @@ from pygame.locals import (
     SCALED,
     KMOD_NONE,
 
+    JOYDEVICEADDED,
+    JOYDEVICEREMOVED,
+
+    JOYBUTTONDOWN,
+
 )
 
 from pygame.mixer import pre_init as pre_init_mixer
@@ -30,13 +35,15 @@ from pygame.key import set_repeat
 
 from pygame.time import Clock
 
-from pygame.color import THECOLORS
-
 from pygame.display import set_icon, set_caption, set_mode, update
 
 from pygame.image import load as load_image
 
-from pygame.event import get
+from pygame.event import (
+    Event,
+    get as get_events,
+    custom_type as get_custom_event_type,
+)
 
 
 
@@ -74,11 +81,13 @@ flag = SCALED | (FULLSCREEN if USER_PREFS['FULLSCREEN'] else 0)
 
 SCREEN = set_mode(SIZE, flag)
 
-SCREEN.fill(THECOLORS['white'])
+SCREEN.fill('white')
 WHITE_BG = SCREEN.copy()
 
 BLACK_BG = SCREEN.copy()
 BLACK_BG.fill('black')
+
+SCREEN_COPY = SCREEN.copy()
 
 SCREEN_RECT = SCREEN.get_rect()
 
@@ -273,6 +282,52 @@ MOD_KEYS_MAP = {
 }
 
 
+### custom gamepad event types and respective event instances
+### for directional triggers; they serve the same purpose of
+### KEYUP/MOUSEBUTTONUP events, but for gamepad movement triggers
+
+## pressing directionals
+
+GAMEPADDIRECTIONALPRESSED = get_custom_event_type()
+
+GAMEPADUPPRESSED = Event(GAMEPADDIRECTIONALPRESSED, {'direction': 'up'})
+GAMEPADDOWNPRESSED = Event(GAMEPADDIRECTIONALPRESSED, {'direction': 'down'})
+GAMEPADLEFTPRESSED = Event(GAMEPADDIRECTIONALPRESSED, {'direction': 'left'})
+GAMEPADRIGHTPRESSED = Event(GAMEPADDIRECTIONALPRESSED, {'direction': 'right'})
+
+## releasing directionals
+
+GAMEPADDIRECTIONALRELEASED = get_custom_event_type()
+
+GAMEPADUPRELEASED = Event(GAMEPADDIRECTIONALRELEASED, {'direction': 'up'})
+GAMEPADDOWNRELEASED = Event(GAMEPADDIRECTIONALRELEASED, {'direction': 'down'})
+GAMEPADLEFTRELEASED = Event(GAMEPADDIRECTIONALRELEASED, {'direction': 'left'})
+GAMEPADRIGHTRELEASED = Event(GAMEPADDIRECTIONALRELEASED, {'direction': 'right'})
+
+
+### events indicating gamepad plugging/unplugging
+
+GAMEPAD_PLUGGING_OR_UNPLUGGING_EVENTS = (
+
+    frozenset((
+        JOYDEVICEADDED,
+        JOYDEVICEREMOVED,
+    ))
+
+)
+
+### events indicating a trigger was pressed
+
+KEYBOARD_OR_GAMEPAD_PRESSED_EVENTS = (
+
+    frozenset((
+        KEYDOWN,
+        JOYBUTTONDOWN,
+        GAMEPADDIRECTIONALPRESSED,
+    ))
+
+)
+
 
 ### function to pause when recording/playing session
 
@@ -290,7 +345,7 @@ def pause():
 
         ### process events
 
-        for event in get():
+        for event in get_events():
 
             if event.type == QUIT:
                 quit_game()

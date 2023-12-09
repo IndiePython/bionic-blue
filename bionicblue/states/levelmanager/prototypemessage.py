@@ -19,7 +19,7 @@ def get_message_surf():
 
     surfs = tuple(
 
-        render_text(text, 'regular', 12, 'white', 'blue')
+        render_text(text, 'regular', 12, 0, 'white', 'blue')
 
         for text in (
             "End of prototype/demo :(",

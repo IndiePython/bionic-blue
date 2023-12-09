@@ -14,6 +14,9 @@ from .levelmanager import LevelManager
 from .hqmanager import HeadQuartersManager
 
 from .mainmenu import MainMenu
+
+from .controlsscreen import ControlsScreen
+
 #from .optionscreen import OptionsScreen
 #from .endscreen import EndScreen
 
@@ -32,10 +35,12 @@ def setup_states():
 
     states.title_screen = TitleScreen()
     states.main_menu = MainMenu()
+    states.controls_screen = ControlsScreen()
     #states.options_screen = OptionsScreen()
 
 def get_game_state():
     """Pick appropriate gameplay state, prepare and return it."""
+
     return (
         REFS.states.level_manager
         if REFS.data['level_name'] == 'intro.lvl'

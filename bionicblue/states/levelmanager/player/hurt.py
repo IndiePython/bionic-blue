@@ -10,6 +10,8 @@ from pygame.locals import (
     K_j,
     K_ESCAPE,
 
+    JOYBUTTONUP,
+
 )
 
 
@@ -25,7 +27,14 @@ from ....constants import (
 
 from ....pygamesetup import SERVICES_NS
 
-from ....pygamesetup.constants import GENERAL_NS
+from ....pygamesetup.constants import (
+    GENERAL_NS,
+    GAMEPAD_PLUGGING_OR_UNPLUGGING_EVENTS,
+)
+
+from ....pygamesetup.gamepaddirect import GAMEPAD_NS, setup_gamepad_if_existent
+
+from ....userprefsman.main import KEYBOARD_CONTROLS, GAMEPAD_CONTROLS
 
 
 
@@ -33,20 +42,28 @@ class Hurt:
 
     def hurt_control(self):
 
-        ###
+        ### process events
 
         for event in SERVICES_NS.get_events():
 
-            if event.type == QUIT:
-                quit_game()
-
-            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+            if event.type == KEYDOWN and event.key == K_ESCAPE:
                 quit_game()
 
             elif event.type == KEYUP:
 
-                if event.key == K_j:
+                if event.key == KEYBOARD_CONTROLS['shoot']:
                     self.stop_charging()
+
+            elif event.type == JOYBUTTONUP:
+
+                if event.button == GAMEPAD_CONTROLS['shoot']:
+                    self.stop_charging()
+
+            elif event.type in GAMEPAD_PLUGGING_OR_UNPLUGGING_EVENTS:
+                setup_gamepad_if_existent()
+
+            elif event.type == QUIT:
+                quit_game()
 
     def hurt_update(self):
 

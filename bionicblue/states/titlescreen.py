@@ -5,7 +5,7 @@ from itertools import cycle
 
 ### third-party imports
 
-from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
+from pygame.locals import QUIT
 
 from pygame.display import update
 
@@ -24,8 +24,12 @@ from ..pygamesetup.constants import (
     SCREEN_RECT,
     BLACK_BG,
     FPS,
+    GAMEPAD_PLUGGING_OR_UNPLUGGING_EVENTS,
+    KEYBOARD_OR_GAMEPAD_PRESSED_EVENTS,
     blit_on_screen,
 )
+
+from ..pygamesetup.gamepaddirect import setup_gamepad_if_existent
 
 from ..exceptions import SwitchStateException
 
@@ -95,10 +99,7 @@ class TitleScreen:
 
         for event in SERVICES_NS.get_events():
 
-            if event.type == QUIT:
-                quit_game()
-
-            elif event.type == KEYDOWN and event.key != K_ESCAPE:
+            if event.type in KEYBOARD_OR_GAMEPAD_PRESSED_EVENTS:
 
                 if self.update == self.update_draw_label_flag:
 
@@ -106,6 +107,12 @@ class TitleScreen:
                     main_menu.prepare()
 
                     raise SwitchStateException(main_menu)
+
+            elif event.type in GAMEPAD_PLUGGING_OR_UNPLUGGING_EVENTS:
+                setup_gamepad_if_existent()
+
+            elif event.type == QUIT:
+                quit_game()
 
     def update_title_position(self):
 

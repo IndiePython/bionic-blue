@@ -9,7 +9,7 @@ from ....config import SURF_MAP
 
 from ....pygamesetup.constants import blit_on_screen
 
-from ....surfsman import get_seamless_surf
+from ....surfsman import get_larger_surf_by_repeating
 
 
 class Ladder:
@@ -27,7 +27,7 @@ class Ladder:
 
         else:
             self.image = surf_map[size] = (
-                get_seamless_surf(SURF_MAP['ladder.png'], size)
+                get_larger_surf_by_repeating(SURF_MAP['ladder.png'], size)
             )
 
         self.rect = self.image.get_rect()

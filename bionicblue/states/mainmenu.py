@@ -3,12 +3,17 @@
 ### third-party imports
 
 from pygame.locals import (
+
     QUIT,
+
     KEYDOWN,
     K_ESCAPE,
     K_RETURN,
     K_DOWN,
     K_UP,
+
+    JOYBUTTONDOWN,
+
 )
 
 from pygame.display import update
@@ -27,9 +32,13 @@ from ..pygamesetup import SERVICES_NS
 from ..pygamesetup.constants import (
     SCREEN_RECT,
     BLACK_BG,
+    GAMEPADDIRECTIONALPRESSED,
+    GAMEPAD_PLUGGING_OR_UNPLUGGING_EVENTS,
     FPS,
     blit_on_screen,
 )
+
+from ..pygamesetup.gamepaddirect import setup_gamepad_if_existent
 
 from ..constants import CHARGED_SHOT_SPEED
 
@@ -43,6 +52,8 @@ from ..classes2d.single import UIObject2D
 
 from ..classes2d.collections import UIList2D
 
+from ..userprefsman.main import GAMEPAD_CONTROLS
+
 
 
 class MainMenu:
@@ -53,25 +64,27 @@ class MainMenu:
 
         labels_data_tuples = [
 
-            # a 3-tuple containing label title and 02 surfaces
+            # a 3-tuple containing a string key and 02 surfaces
             # representing it (unhighlighted and highlighted
 
             (
 
-                label_title,
+                key,
 
                 *(
-                    render_text(label_title.title(), 'regular', 16, color)
+                    render_text(label_title, 'regular', 12, 2, color)
                     for color in ('cyan', 'orange')
                 )
 
             )
 
-            for label_title in (
-                'continue',
-                'new game',
-                'load game',
-                'options',
+            for key, label_title in (
+                ('continue', 'Continue'),
+                ('new_game', 'New Game'),
+                ('load_game', 'Load Game'),
+                ('kbd_controls', 'Keyboard Controls'),
+                ('gp_controls', 'Gamepad Controls'),
+                ('options', 'Options'),
             )
 
         ]
@@ -84,31 +97,55 @@ class MainMenu:
         obj_map = {}
 
         for (
-            title,
+            key,
             unhighlighted_surf,
             highlighted_surf,
         ) in labels_data_tuples:
 
-            unhighlighted_surf_map[title] = unhighlighted_surf
-            highlighted_surf_map[title] = highlighted_surf
+            unhighlighted_surf_map[key] = unhighlighted_surf
+            highlighted_surf_map[key] = highlighted_surf
 
             obj = UIObject2D.from_surface(unhighlighted_surf)
-            obj.title = title
-            obj_map[title] = obj
+            obj.key = key
+            obj_map[key] = obj
 
         ###
 
         self.compact_items = (
-            UIList2D(obj_map[title] for title in ('new game', 'options'))
+
+            UIList2D(
+
+                obj_map[key]
+
+                for key in (
+                    'new_game',
+                    'kbd_controls',
+                    'gp_controls',
+                    'options',
+                )
+
+            )
+
         )
 
         self.full_items = (
-            UIList2D(
-                obj_map[title]
-                for title in ('continue', 'new game', 'load game', 'options')
-            )
-        )
 
+            UIList2D(
+
+                obj_map[key]
+
+                for key in (
+                    'continue',
+                    'new_game',
+                    'load_game',
+                    'kbd_controls',
+                    'gp_controls',
+                    'options',
+                )
+
+            )
+
+        )
 
         self.control = self.control_item_selection
         self.update = do_nothing
@@ -122,7 +159,6 @@ class MainMenu:
         items.rect.snap_rects_ip(
             retrieve_pos_from='midbottom',
             assign_pos_to='midtop', 
-            offset_pos_by=(0, 5),
         )
 
         items.rect.midbottom = SCREEN_RECT.move(0, -10).midbottom
@@ -140,54 +176,82 @@ class MainMenu:
         unhighlighted_surf_map = self.unhighlighted_surf_map
 
         for obj in self.items:
-            obj.image = unhighlighted_surf_map[obj.title]
+            obj.image = unhighlighted_surf_map[obj.key]
 
         highlighted_obj = self.items[self.current_index]
-        highlighted_obj.image = self.highlighted_surf_map[highlighted_obj.title]
+        highlighted_obj.image = self.highlighted_surf_map[highlighted_obj.key]
 
         REFS.blue_boy.rect.centery = highlighted_obj.rect.centery
         REFS.blue_boy.rect.right = self.items_left - 20
 
     def execute_selected(self):
 
-        item_title = self.compact_items[self.current_index].title
+        item_key = self.compact_items[self.current_index].key
 
-        if item_title == 'new game':
+        if item_key == 'new_game':
 
             game_state = REFS.get_game_state()
             game_state.prepare()
 
             raise SwitchStateException(game_state)
 
+        elif 'controls' in item_key :
+
+            controls_screen = REFS.states.controls_screen
+            controls_screen.prepare(item_key)
+
+            raise SwitchStateException(controls_screen)
+
     def control_item_selection(self):
 
         for event in SERVICES_NS.get_events():
 
-            if event.type == QUIT:
-                quit_game()
-
-            elif event.type == KEYDOWN:
+            if event.type == KEYDOWN:
 
                 if event.key == K_ESCAPE:
                     quit_game()
 
                 elif event.key == K_RETURN:
-
-                    self.control = self.control_wait_shot_animation
-                    self.update  = self.update_shot_appearing
-
-                    REFS.blue_boy.ap.blend('+shooting')
-                    REFS.middle_shot.ap.switch_animation('appearing_right')
-
-                    shot_center = REFS.blue_boy.rect.move(7, -2).midright
-                    REFS.middle_shot.rect.center = shot_center
+                    self.start_shooting_animation()
 
                 elif event.key in (K_UP, K_DOWN):
 
-                    increment = -1 if event.key == K_UP else 1
+                    steps = -1 if event.key == K_UP else 1
+                    self.select_another(steps)
 
-                    self.current_index = (self.current_index + increment) % self.item_count
-                    self.highlight_selected()
+            elif event.type == JOYBUTTONDOWN:
+
+                if event.button == GAMEPAD_CONTROLS['start_button']:
+                    self.start_shooting_animation()
+
+            elif event.type == GAMEPADDIRECTIONALPRESSED:
+
+                if event.direction in ('up', 'down'):
+
+                    steps = -1 if event.direction == 'up' else 1
+                    self.select_another(steps)
+
+            elif event.type in GAMEPAD_PLUGGING_OR_UNPLUGGING_EVENTS:
+                setup_gamepad_if_existent()
+
+            elif event.type == QUIT:
+                quit_game()
+
+    def select_another(self, steps):
+
+        self.current_index = (self.current_index + steps) % self.item_count
+        self.highlight_selected()
+
+    def start_shooting_animation(self):
+
+        self.control = self.control_wait_shot_animation
+        self.update  = self.update_shot_appearing
+
+        REFS.blue_boy.ap.blend('+shooting')
+        REFS.middle_shot.ap.switch_animation('appearing_right')
+
+        shot_center = REFS.blue_boy.rect.move(7, -2).midright
+        REFS.middle_shot.rect.center = shot_center
 
     def control_wait_shot_animation(self):
 

@@ -60,7 +60,9 @@ class ResourceLoader:
 
     def __init__(self):
 
-        self.loading_surf = render_text('loading...', 'regular', 16)
+        self.loading_surf = (
+            render_text('loading...', 'regular', 16, 0, 'black', 'white')
+        )
 
         self.resources_to_process = chain(
 
@@ -141,7 +143,7 @@ class ResourceLoader:
 
             REFS.bb_title = (
                 UIObject2D.from_surface(
-                    render_text('Bionic Blue', 'regular', 38, 'dodgerblue')
+                    render_text('Bionic Blue', 'regular', 38, 0, 'dodgerblue')
                 )
             )
 

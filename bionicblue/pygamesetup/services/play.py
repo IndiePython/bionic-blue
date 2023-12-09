@@ -279,6 +279,7 @@ def set_behaviour(services_namespace):
                 text = SESSION_DATA['recording_title'],
                 style = 'regular',
                 size = 12,
+                padding = 0,
                 foreground_color = THECOLORS['white'],
                 background_color = THECOLORS['blue'],
             )
@@ -307,6 +308,7 @@ def set_behaviour(services_namespace):
                 text = duration_text,
                 style = 'regular',
                 size = 12,
+                padding = 0,
                 foreground_color = THECOLORS['white'],
                 background_color = THECOLORS['blue'],
             )
@@ -450,6 +452,7 @@ LABELS = [
             text = text,
             style = 'regular',
             size = 12,
+            padding = 0,
             foreground_color = THECOLORS['white'],
             background_color = THECOLORS['blue'],
         )
@@ -469,6 +472,7 @@ PAUSED_LABEL = (
             text = "F8: play/pause",
             style = 'regular',
             size = 12,
+            padding = 0,
             foreground_color = THECOLORS['white'],
             background_color = THECOLORS['red3'],
         )

@@ -17,6 +17,10 @@ from ....config import REFS, SOUND_MAP, quit_game
 
 from ....pygamesetup import SERVICES_NS
 
+from ....pygamesetup.constants import GAMEPAD_PLUGGING_OR_UNPLUGGING_EVENTS
+
+from ....pygamesetup.gamepaddirect import setup_gamepad_if_existent
+
 
 
 class TeleportingIn:
@@ -25,13 +29,16 @@ class TeleportingIn:
 
         for event in SERVICES_NS.get_events():
 
-            if event.type == QUIT:
-                quit_game()
-
-            elif event.type == KEYDOWN:
+            if event.type == KEYDOWN:
 
                 if event.key == K_ESCAPE:
                     quit_game()
+
+            elif event.type in GAMEPAD_PLUGGING_OR_UNPLUGGING_EVENTS:
+                setup_gamepad_if_existent()
+
+            elif event.type == QUIT:
+                quit_game()
 
     def teleporting_in_update(self):
 

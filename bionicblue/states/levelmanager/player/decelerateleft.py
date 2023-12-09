@@ -4,12 +4,13 @@
 from pygame.locals import (
 
     QUIT,
-    K_a, K_d,
 
     KEYDOWN,
     KEYUP,
     K_ESCAPE,
-    K_j, K_k,
+
+    JOYBUTTONDOWN,
+    JOYBUTTONUP,
 
 )
 
@@ -22,7 +23,14 @@ from ....constants import DAMAGE_REBOUND_FRAMES
 
 from ....pygamesetup import SERVICES_NS
 
-from ....pygamesetup.constants import GENERAL_NS
+from ....pygamesetup.constants import (
+    GENERAL_NS,
+    GAMEPAD_PLUGGING_OR_UNPLUGGING_EVENTS,
+)
+
+from ....pygamesetup.gamepaddirect import GAMEPAD_NS, setup_gamepad_if_existent
+
+from ....userprefsman.main import KEYBOARD_CONTROLS, GAMEPAD_CONTROLS
 
 from .projectiles.default import DefaultProjectile
 from .projectiles.chargedshot import ChargedShot
@@ -33,40 +41,62 @@ class DecelerateLeft:
 
     def decelerate_left_control(self):
 
-        ###
+        ### process events
 
         for event in SERVICES_NS.get_events():
 
-            if event.type == QUIT:
-                quit_game()
-
-            elif event.type == KEYDOWN:
+            if event.type == KEYDOWN:
 
                 if event.key == K_ESCAPE:
                     quit_game()
 
-                elif event.key == K_j:
+                elif event.key == KEYBOARD_CONTROLS['shoot']:
                     self.decelerate_left_shoot()
 
-                elif event.key == K_k:
+                elif event.key == KEYBOARD_CONTROLS['jump']:
+
+                    if not self.midair:
+                        self.y_speed += self.jump_dy
+
+            elif event.type == JOYBUTTONDOWN:
+
+                if event.button == GAMEPAD_CONTROLS['shoot']:
+                    self.decelerate_left_shoot()
+
+                elif event.button == GAMEPAD_CONTROLS['jump']:
 
                     if not self.midair:
                         self.y_speed += self.jump_dy
 
             elif event.type == KEYUP:
 
-                if event.key == K_j and self.charge_start:
+                if event.key == KEYBOARD_CONTROLS['shoot'] and self.charge_start:
 
                     result = self.stop_charging()
 
                     if result:
                         self.decelerate_left_release_charge(result)
 
-        ###
+            elif event.type == JOYBUTTONUP:
+
+                if event.button == GAMEPAD_CONTROLS['shoot'] and self.charge_start:
+
+                    result = self.stop_charging()
+
+                    if result:
+                        self.decelerate_left_release_charge(result)
+
+            elif event.type in GAMEPAD_PLUGGING_OR_UNPLUGGING_EVENTS:
+                setup_gamepad_if_existent()
+
+            elif event.type == QUIT:
+                quit_game()
+
+        ### process state of keyboard/gamepad triggers
 
         pressed_state = SERVICES_NS.get_pressed_keys()
 
-        if pressed_state[K_d]:
+        if pressed_state[KEYBOARD_CONTROLS['right']] or (GAMEPAD_NS.x_sum > 0):
 
             self.x_accel = min(self.x_accel + 1, 0)
 
@@ -75,7 +105,7 @@ class DecelerateLeft:
                 self.set_state('walk_right')
                 self.aniplayer.switch_animation('walk_right')
 
-        elif pressed_state[K_a]:
+        elif pressed_state[KEYBOARD_CONTROLS['left']] or (GAMEPAD_NS.x_sum < 0):
 
             self.x_accel += -1
             self.set_state('walk_left')

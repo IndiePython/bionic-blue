@@ -10,9 +10,16 @@ from .config import REFS
 
 from .pygamesetup import SERVICES_NS, switch_mode
 
+from .pygamesetup.gamepaddirect import setup_gamepad_if_existent
+
 from .states import setup_states
 
-from .exceptions import SwitchStateException, SwitchModeException
+from .exceptions import (
+    SwitchStateException,
+    BackToBeginningException,
+    SwitchModeException,
+)
+
 
 
 def run_game():
@@ -21,6 +28,8 @@ def run_game():
     setup_states()
 
     state = REFS.states.resource_loader
+
+    setup_gamepad_if_existent()
 
     running = True
 
@@ -40,6 +49,9 @@ def run_game():
 
         except SwitchStateException as obj:
             state = obj.state
+
+        except BackToBeginningException as obj:
+            pass
 
         except SwitchModeException as obj:
             switch_mode(obj)

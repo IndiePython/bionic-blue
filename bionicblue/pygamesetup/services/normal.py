@@ -30,6 +30,8 @@ from ..constants import (
     maintain_fps,
 )
 
+from ..gamepaddirect import GAMEPAD_NS
+
 
 
 ### create and use function to activate normal behaviour
@@ -65,3 +67,7 @@ def frame_checkups():
 
     ### increment frame number
     GENERAL_NS.frame_index += 1
+
+    ### store data and post custom events for gamepad
+    ### directional triggers
+    GAMEPAD_NS.prepare_data_and_events()

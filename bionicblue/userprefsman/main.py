@@ -6,6 +6,14 @@ from os import environ
 
 from pathlib import Path
 
+from copy import deepcopy
+
+from pprint import pformat
+
+
+### third-party import
+from pygame import locals as pygame_locals
+
 
 ### local imports
 
@@ -46,15 +54,54 @@ neither custom data like recent files and bookmarks.
 """.strip()
 
 
+### default controls
+
+DEFAULT_KEYBOARD_CONTROL_NAMES = {
+
+    'up': 'K_w',
+    'down': 'K_s',
+    'left': 'K_a',
+    'right': 'K_d',
+
+    'shoot': 'K_j',
+    'jump': 'K_k',
+
+    'previous_power': 'K_u',
+    'next_power': 'K_o',
+
+}
+
+DEFAULT_GAMEPAD_CONTROLS = {
+
+    'shoot': None,
+    'jump': None,
+
+    'previous_power': None,
+    'next_power': None,
+
+    'start_button': None,
+
+}
+
+
 ### dictionary wherein to store user preferences; initially
 ### populated with default values
 
-USER_PREFS = {
+DEFAULT_USER_PREFS = {
     "FULLSCREEN": False,
     "MUSIC_VOLUME": .1,
     "SFX_VOLUME": .3,
     "LAST_USED_SAVE_SLOT": None,
+    "KEYBOARD_CONTROL_NAMES": DEFAULT_KEYBOARD_CONTROL_NAMES,
+    "GAMEPAD_CONTROLS": DEFAULT_GAMEPAD_CONTROLS,
 }
+
+
+USER_PREFS = deepcopy(DEFAULT_USER_PREFS)
+
+KEYBOARD_CONTROL_NAMES = USER_PREFS['KEYBOARD_CONTROL_NAMES']
+GAMEPAD_CONTROLS = USER_PREFS['GAMEPAD_CONTROLS']
+
 
 
 ### validate user preference defaults
@@ -78,7 +125,17 @@ APP_CONFIG_DIR = config_dir / APP_DIR_NAME
 CONFIG_FILEPATH = APP_CONFIG_DIR / "config.pyl"
 
 
-## if file exists, try loading it
+### utility function
+
+def save_config_on_disk():
+
+    CONFIG_FILEPATH.write_text(
+        pformat(USER_PREFS, indent=2),
+        encoding='utf-8',
+    )
+
+
+### if file exists, try loading it
 
 if CONFIG_FILEPATH.exists():
 
@@ -101,7 +158,14 @@ if CONFIG_FILEPATH.exists():
             pass
 
         else:
-            USER_PREFS.update(**user_config_data)
+
+            for key, value in user_config_data.items():
+
+                if isinstance(value, dict):
+                    USER_PREFS[key].update(value)
+
+                else:
+                    USER_PREFS[key] = value
 
 else:
 
@@ -116,3 +180,12 @@ else:
 
             #logger.exception(CONFIG_DIR_NOT_CREATED_MESSAGE)
             pass
+
+        else:
+            save_config_on_disk()
+
+
+KEYBOARD_CONTROLS = {
+    action_name: getattr(pygame_locals, key_name)
+    for action_name, key_name in KEYBOARD_CONTROL_NAMES.items()
+}

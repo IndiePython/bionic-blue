@@ -1,14 +1,14 @@
 
 ### third-party imports
 
+from pygame import Surface
+
 from pygame.font import Font
 
-from pygame.color import THECOLORS
 
-
-### local imports
-
+### local import
 from .config import FONTS_DIR
+
 
 
 REGULAR_FONT_PATH = FONTS_DIR / 'ark_pixel_12px_latin.ttf'
@@ -49,11 +49,12 @@ def render_text(
     text,
     style,
     size,
-    foreground_color=THECOLORS['white'],
-    background_color=THECOLORS['black'],
+    padding = 0,
+    foreground_color='white',
+    background_color='black',
 ):
 
-    return (
+    surf = (
 
         FONT_MAP
 
@@ -69,3 +70,26 @@ def render_text(
         .convert()
 
     )
+
+    if padding > 0:
+
+        double_padding = padding * 2
+
+        padded_surf = (
+            Surface(
+                tuple(
+                    dimension + double_padding
+                    for dimension in surf.get_size()
+                )
+            ).convert()
+        )
+
+        padded_surf.fill(background_color)
+
+        padded_surf.blit(surf, (padding, padding))
+
+        return padded_surf
+
+    else:
+        return surf
+
