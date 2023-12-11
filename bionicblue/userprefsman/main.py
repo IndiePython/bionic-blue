@@ -17,7 +17,7 @@ from pygame import locals as pygame_locals
 
 ### local imports
 
-from ..appinfo import APP_DIR_NAME
+from ..config import WRITEABLE_PATH
 
 from ..ourstdlibs.pyl import load_pyl
 
@@ -45,12 +45,6 @@ configuration will be used instead
 UNEXISTENT_USER_PREFS_MESSAGE = """
 User configuration doesn't exist. Default configuration
 will be used instead
-""".strip()
-
-CONFIG_DIR_NOT_CREATED_MESSAGE = """
-Couldn't create specific directory/ies within config directory to
-store user files; we won't be able to save a custom configuration
-neither custom data like recent files and bookmarks.
 """.strip()
 
 
@@ -108,21 +102,8 @@ GAMEPAD_CONTROLS = USER_PREFS['GAMEPAD_CONTROLS']
 validate_prefs_dict(USER_PREFS)
 
 
-### defining path to config file
-
-if "APPDATA" in environ:
-    config_dir = Path(environ["APPDATA"])
-
-elif "XDG_CONFIG_HOME" in environ:
-    config_dir = Path(environ["XDG_CONFIG_HOME"])
-
-else:
-    config_dir = Path(environ["HOME"]) / ".config"
-
-
-APP_CONFIG_DIR = config_dir / APP_DIR_NAME
-
-CONFIG_FILEPATH = APP_CONFIG_DIR / "config.pyl"
+### define path to config file
+CONFIG_FILEPATH = WRITEABLE_PATH / "config.pyl"
 
 
 ### utility function
@@ -170,19 +151,7 @@ if CONFIG_FILEPATH.exists():
 else:
 
     #logger.info(UNEXISTENT_USER_PREFS_MESSAGE)
-
-    if not APP_CONFIG_DIR.exists():
-
-        try:
-            APP_CONFIG_DIR.mkdir(parents=True)
-
-        except Exception:
-
-            #logger.exception(CONFIG_DIR_NOT_CREATED_MESSAGE)
-            pass
-
-        else:
-            save_config_on_disk()
+    save_config_on_disk()
 
 
 KEYBOARD_CONTROLS = {

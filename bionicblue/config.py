@@ -4,13 +4,15 @@
 from pathlib import Path
 
 
-### third-party import
+### third-party imports
+
 from pygame import quit as quit_pygame
+
+from pygame.system import get_pref_path
 
 
 ### local import
-from .appinfo import APP_DIR_NAME
-
+from .appinfo import ORG_DIR_NAME, APP_DIR_NAME 
 
 
 ###
@@ -100,12 +102,14 @@ SOUND_MAP = {}
 
 ###
 
-SAVE_SLOTS_DIR = Path.home() / '.local' / APP_DIR_NAME / 'save_slots'
+WRITEABLE_PATH = Path(get_pref_path(ORG_DIR_NAME, APP_DIR_NAME))
+
+SAVE_SLOTS_DIR = WRITEABLE_PATH / 'save_slots'
 
 if not SAVE_SLOTS_DIR.exists():
 
     try:
-        SAVE_SLOTS_DIR.mkdir(parents=True)
+        SAVE_SLOTS_DIR.mkdir()
 
     except Exception as err:
         print("Couldn't create folder for save slots")
