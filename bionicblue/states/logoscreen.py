@@ -12,11 +12,15 @@ from pygame.display import update
 
 ### local imports
 
-from ..config import REFS, SURF_MAP, quit_game
+from ..config import REFS, SURF_MAP, COLORKEY, quit_game
 
 from ..pygamesetup import SERVICES_NS
 
-from ..pygamesetup.constants import WHITE_BG, blit_on_screen
+from ..pygamesetup.constants import WHITE_BG, SCREEN_RECT, blit_on_screen
+
+from ..textman import render_text
+
+from ..surfsman import combine_surfaces
 
 from ..exceptions import SwitchStateException
 
@@ -26,15 +30,44 @@ class LogoScreen:
 
     def prepare(self):
 
+        surfs = tuple(
+
+            combine_surfaces(
+                [
+                    render_text(text, 'regular', 12, 0, 'black', COLORKEY),
+                    SURF_MAP[key],
+                ],
+                retrieve_pos_from = 'midtop',
+                assign_pos_to = 'midbottom',
+                offset_pos_by = (0, -4),
+                background_color = COLORKEY,
+            )
+
+            for key, text in (
+                ('indiepython_logo.png', "The Indie Python project"),
+                ('kennedy_logo.png', "A game by Kennedy R. S. Guerra"),
+                ('python_logo.png', "Powered by Python"),
+                ('pygame_logo.png', "Powered by pygame-ce"),
+            )
+
+        )
+
+        rmap = self.rect_map = {}
+
+        for surf in surfs:
+
+            surf.set_colorkey(COLORKEY)
+
+            rect = surf.get_rect()
+            rect.center = SCREEN_RECT.center
+            rmap[surf] = rect
+
 #        self.get_next_surf = iter(range(0)).__next__
+
         self.get_next_surf = chain.from_iterable(
 
-            chain(repeat(SURF_MAP[key], 45), repeat(WHITE_BG, 1))
-            for key in (
-                'indiepython_logo.png',
-                'python_logo.png',
-                'pygame_logo.png',
-            )
+            repeat(surf, 70)
+            for surf in surfs
 
         ).__next__
 
@@ -53,7 +86,16 @@ class LogoScreen:
         blit_on_screen(WHITE_BG, (0, 0))
 
         try:
-            blit_on_screen(self.get_next_surf(), (102, 30))
+
+            surf = self.get_next_surf()
+
+            rect_or_pos = (
+                self.rect_map[surf]
+                if surf in self.rect_map
+                else (0, 0)
+            )
+
+            blit_on_screen(surf, rect_or_pos)
 
         except StopIteration:
 

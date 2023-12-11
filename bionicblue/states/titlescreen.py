@@ -121,7 +121,7 @@ class TitleScreen:
             progress = self.current_movement_frame / self.movement_duration_frames
             self.title_rect.midtop = self.start_midtop.lerp(self.end_midtop, progress)
 
-            REFS.blue_boy.rect.midright = self.title_rect.move(-10, 0).midleft
+            REFS.blue_boy.rect.midright = self.title_rect.move(-10, 5).midleft
 
             self.current_movement_frame += 1
 

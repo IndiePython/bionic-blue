@@ -8,6 +8,7 @@ from functools import partial
 from pygame import (
     init as init_pygame,
     locals as pygame_locals,
+    Surface,
 )
 
 from pygame.locals import (
@@ -69,8 +70,10 @@ init_pygame()
 
 ### set icon and caption for window
 
-image_path = str(DATA_DIR / "app_icon.png")
-#set_icon(load_image(image_path))
+image_path = str(DATA_DIR / "game_icon.png")
+icon = load_image(image_path)
+icon.set_colorkey((68, 68, 68))
+set_icon(icon)
 
 
 ### create/set screen

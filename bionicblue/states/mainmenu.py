@@ -60,6 +60,8 @@ class MainMenu:
 
     def __init__(self):
 
+        self.current_index = 0
+
         ###
 
         labels_data_tuples = [
@@ -80,11 +82,11 @@ class MainMenu:
 
             for key, label_title in (
                 ('continue', 'Continue'),
-                ('new_game', 'New game (prototype)'),
+                ('new_game', 'New game (demo)'),
                 ('load_game', 'Load game'),
                 ('kbd_controls', 'Keyboard controls'),
                 ('gp_controls', 'Gamepad controls'),
-                ('options', 'Options (not implemented yet)'),
+                ('options', 'Options (not implemented)'),
                 ('exit', 'Exit game'),
             )
 
@@ -168,7 +170,8 @@ class MainMenu:
 
         self.items_left = items.rect.left
 
-        self.current_index = 0
+        if self.current_index >= self.item_count:
+            self.current_index = self.item_count - 1
 
         REFS.blue_boy.ap.switch_animation('idle_right')
 

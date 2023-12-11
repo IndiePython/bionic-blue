@@ -39,6 +39,8 @@ from ..pygamesetup.constants import FPS, WHITE_BG, SCREEN_RECT, blit_on_screen
 
 from ..textman import render_text
 
+from ..surfsman import combine_surfaces
+
 from ..ani2d.player import AnimationPlayer2D
 from ..ani2d.processing import process_animation_data
 
@@ -141,9 +143,22 @@ class ResourceLoader:
 
             ### create title label
 
+            title_text_surf = (
+                render_text('Bionic Blue', 'regular', 38, 0, 'dodgerblue')
+            )
+
+            author_name_surf = (
+                render_text("Kennedy Guerra's", 'regular', 12, 0, 'white')
+            )
+
             REFS.bb_title = (
                 UIObject2D.from_surface(
-                    render_text('Bionic Blue', 'regular', 38, 0, 'dodgerblue')
+                    combine_surfaces(
+                        [title_text_surf, author_name_surf],
+                        retrieve_pos_from = 'topleft',
+                        assign_pos_to = 'bottomleft',
+                        offset_pos_by = (0, 5),
+                    )
                 )
             )
 
