@@ -1,3 +1,6 @@
-"""Blue Shooter Bot - Become a blue robot that shoots enemies."""
+"""Bionic Blue - action platformer game.
 
-__version__ = '0.0.1'
+A bionic boy fights robots to protect humanity.
+"""
+
+__version__ = '0.10.0'

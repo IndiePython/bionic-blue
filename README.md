@@ -10,11 +10,11 @@
 <br />
 
 
-Bionic Blue is an action platformer game featuring a bionic boy tasked with protecting humanity against dangerous robots. It is currently at an early stage of development and for now works like a prototype to showcase actions/animations. This project is part of the [Indie Python](https://github.com/IndiePython) project and has a [dedicated website](https://bionicblue.indiepython.com) where you can find more info about it.
+Bionic Blue is an action platformer game featuring a bionic boy tasked with protecting humanity against dangerous robots. It is currently at an early stage of development and for now works like a demo to showcase gameplay. This project is part of the [Indie Python](https://github.com/IndiePython) project and has a [dedicated website](https://bionicblue.indiepython.com) where you can find more info about it.
 
 It is made in [Python](https://github.com/python/cpython)/[pygame-ce](https://github.com/pygame-community/pygame-ce) targeting desktop platforms where Python is available like Windows, Mac and Linux.
 
-This game was created by [Kennedy Richard S. Guerra](https://kennedyrichard.com) (me), who also develops/maintains the game.
+This game was created by [Kennedy R. S. Guerra](https://kennedyrichard.com) (me), who also develops/maintains the game.
 
 Check this youtube video where the game is briefly presented:
 
